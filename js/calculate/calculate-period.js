@@ -70,7 +70,7 @@ exceptDates.addEventListener("click", function (evt) {
 
 function getCountValidDays() {
 
-  // btnNext.setAttribute('disabled', "true")
+  btnNext.setAttribute('disabled', "true")
 
   let isValid = true
 

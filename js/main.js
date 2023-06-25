@@ -68,7 +68,7 @@ btnNext.addEventListener('click', function () {
             if (salaryAmountInputElement.value && selectSalary.value === "salary") {
                 btnNext.removeAttribute('disabled')
             } else {
-                // btnNext.setAttribute('disabled', "true")
+                btnNext.setAttribute('disabled', "true")
             }
         }
     }
@@ -302,7 +302,7 @@ function setPropsOnVacationPeriod(startDateInputVacation, endDateInputVacation, 
         countDaysInputVacation.addClass('not-valid')
     }
 
-    // btnNext.setAttribute('disabled', "true")
+    btnNext.setAttribute('disabled', "true")
 }
 
 startDateInputVacation.on("change", () => {
