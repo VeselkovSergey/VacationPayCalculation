@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--  <link rel="stylesheet" href="/gb/desktop/fonts/fonts.css" />-->
+  <!--  <link rel="stylesheet" href="/gb/desktop/fonts/fonts.css" />-->
   <link rel="stylesheet" href="style/style.css" />
   <link rel="stylesheet" href="style/jquery-ui.css" />
   <title>Расчет отпускных</title>
@@ -30,7 +30,10 @@
         <div class="step__support support">
           <h2 class="step__title">Даты отпуска</h2>
           <button class="support__button"></button>
-          <p class="support__answer">В число календарных дней отпуска не входят праздничные выходные дни из статьи 112 ТК. Эти дни не оплачивают. <button class="support__answer-close"></button></p>
+          <p class="support__answer">В число календарных дней отпуска не входят праздничные выходные дни из статьи 112
+            ТК. Эти дни не оплачивают.
+            <button class="support__answer-close"></button>
+          </p>
         </div>
 
         <div class="step__data vacation">
@@ -64,7 +67,7 @@
             </p>
 
           </div>
-        </span> 
+        </span>
 
         <div class="step__data vacation">
           <label class="vacation__label">
@@ -88,8 +91,13 @@
         </label>
 
         <div class="calculate-period">
-          <p class="calculate-period__support">Обозначьте периоды, за которые сотруднику выплачивался средний заработок: время болезни, декрета, командировок, отпусков и т.п., в том числе период президентских нерабочих дней, если в это время сотрудник не работал. Также приведите отпуска за свой счет.
-            Если в течение расчетного периода сотрудник был в отпуске, на время которого приходились федеральные или региональные праздничные дни, исключать их из расчета не нужно. В этом случае введите два отдельных периода: первый – от начала отпуска до дня, предшествующего праздничному; второй – со дня, следующего за праздничным, до последнего дня отпуска включительно.</p>
+          <p class="calculate-period__support">Обозначьте периоды, за которые сотруднику выплачивался средний заработок:
+            время болезни, декрета, командировок, отпусков и т.п., в том числе период президентских нерабочих дней, если
+            в это время сотрудник не работал. Также приведите отпуска за свой счет.
+            Если в течение расчетного периода сотрудник был в отпуске, на время которого приходились федеральные или
+            региональные праздничные дни, исключать их из расчета не нужно. В этом случае введите два отдельных периода:
+            первый – от начала отпуска до дня, предшествующего праздничному; второй – со дня, следующего за праздничным,
+            до последнего дня отпуска включительно.</p>
 
           <div class="calculate-period__except-dates except-dates">
             <h3 class="except-dates__title">Исключить даты</h3>
@@ -97,7 +105,8 @@
             <div class="except-dates__wrapper">
               <label class="except-dates__field">
                 Начало периода
-                <input class="vacation__input except-data" type="text" data-except-start="val_1" placeholder="ДД/ММ/ГГГГ">
+                <input class="vacation__input except-data" type="text" data-except-start="val_1"
+                       placeholder="ДД/ММ/ГГГГ">
               </label>
               <label class="except-dates__field">
                 Конец периода
@@ -121,11 +130,13 @@
 
       <!-- Зарплата -->
       <li class="step__item">
-        <h2 class="step__title step__title--salary">Какая система оплаты действовала для сотрудника в расчетном периоде: </h2>
+        <h2 class="step__title step__title--salary">Какая система оплаты действовала для сотрудника в расчетном
+          периоде:</h2>
 
         <select class="step__item-select select-salary" name="" id="">
           <option class="select-salary__option" value="salary">Оклад и полный рабочий день</option>
-          <option class="select-salary__option" value="wage">Сдельная, почасовая, плавающий или неполный график и т.п.</option>
+          <option class="select-salary__option" value="wage">Сдельная, почасовая, плавающий или неполный график и т.п.
+          </option>
         </select>
 
         <!-- Оклад -->
@@ -178,7 +189,12 @@
                   <div class="index-switcher__support support">
                     <button class="support__button"></button>
                     <p class="support__answer support__answer--index">Правила пересчета при изменении оклада.
-                      При повышении зарплаты в организации в целом или в подразделении заработок до повышения расчетчик пересчитает на коэффициент индексации. Тогда работник получит отпускные исходя из своего текущего, то есть нового оклада. Если зарплата выросла только у этого работника, выплаты до повышения расчетчик пересчитывать не будет. <button class="support__answer-close"></button></p>
+                      При повышении зарплаты в организации в целом или в подразделении заработок до повышения расчетчик
+                      пересчитает на коэффициент индексации. Тогда работник получит отпускные исходя из своего текущего,
+                      то есть нового оклада. Если зарплата выросла только у этого работника, выплаты до повышения
+                      расчетчик пересчитывать не будет.
+                      <button class="support__answer-close"></button>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -204,8 +220,11 @@
 
               <div class="calculate-wage__support support">
                 <button class="support__button"></button>
-                <p class="support__answer support__answer--wage">Правила пересчета при изменении оклада или тарифной ставки
-                  При повышении зарплаты в организации в целом или в подразделении заработок до повышения пересчитывают на коэффициент индексации. Тогда работник получит отпускные исходя из своего текущего заработка. Если зарплата выросла только у этого работника, выплаты до повышения не пересчитываются.
+                <p class="support__answer support__answer--wage">Правила пересчета при изменении оклада или тарифной
+                  ставки
+                  При повышении зарплаты в организации в целом или в подразделении заработок до повышения пересчитывают
+                  на коэффициент индексации. Тогда работник получит отпускные исходя из своего текущего заработка. Если
+                  зарплата выросла только у этого работника, выплаты до повышения не пересчитываются.
                   <button class="support__answer-close"></button>
                 </p>
               </div>
@@ -344,10 +363,11 @@
 
           </div>
         </div>
-      </li>      
-      
+      </li>
+
       <!-- Премии и надбавки -->
       <li class="step__item">
+
         <h2 class="step__title step__title--bonus">Укажите премии и надбавки, если они были</h2>
 
 
@@ -379,9 +399,8 @@
           <div class="calculate-supplement">
           </div>
         </div>
-        
 
-      </li>   
+      </li>
 
       <!-- Расчет -->
       <li class="step__item">
@@ -397,18 +416,18 @@
           <span class="result-calculate__average-income">1 043 181,82 руб. / 337,42 дн. — средний дневной заработок (3091,64 руб.)</span>
           <span class="result-calculate__vacation">14 дн. — количество дней отпуска</span>
         </div>
-        
+
         <table class="calculate__result-table table-result">
           <tbody>
-            <tr>
-              <th>Месяц</th>
-              <th>Зарплата</th>
-              <th>Коэффициент индексации</th>
-              <th>Премии</th>
-              <th>Надбавки</th>
-              <th>Прочие выплаты</th>
-              <th>ИТОГО</th>
-            </tr>
+          <tr>
+            <th>Месяц</th>
+            <th>Зарплата</th>
+            <th>Коэффициент индексации</th>
+            <th>Премии</th>
+            <th>Надбавки</th>
+            <th>Прочие выплаты</th>
+            <th>ИТОГО</th>
+          </tr>
           </tbody>
         </table>
 
@@ -423,15 +442,15 @@
     <!--  -->
     <div class="calculate__btns step-buttons">
       <button class="step-buttons__prev step-buttons__prev--arrow">Назад</button>
-      <button class="step-buttons__next step-buttons__next--arrow" >Продолжить</button>
+      <button class="step-buttons__next step-buttons__next--arrow">Продолжить</button>
     </div>
   </section>
 
 
-<!-- TEMPLATES -->
+  <!-- TEMPLATES -->
   <template id="premium-template__last-yaer">
     <div class="calculate-premium__content premium-data">
-          
+
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
           <div class="premium-data__caption-support support">
@@ -445,7 +464,7 @@
           <input class="premium-field__input" type="text" placeholder="0,00">
         </label>
       </div>
-      
+
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Месяц начисления</span>
         <label class="premium-data__label premium-field premium-field--data">
@@ -460,7 +479,7 @@
 
   <template id="premium-template__half-yaer">
     <div class="calculate-premium__content premium-data premium-data--half-yaer">
-          
+
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
           <div class="premium-data__caption-support support">
@@ -474,14 +493,14 @@
           <input class="premium-field__input" type="text" placeholder="0,00">
         </label>
       </div>
-      
+
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Месяц начисления</span>
         <label class="premium-data__label premium-field premium-field--data">
           <input class="premium-field__input input-data" type="text" placeholder="ДД.ММ.ГГГГ">
         </label>
       </div>
-      
+
       <div class="premium-data__wrapper-period">
         <div class="premium-data__wrapper">
           <span class="premium-data__caption">Начислена за период</span>
@@ -503,7 +522,7 @@
 
   <template id="premium-template__montly">
     <div class="calculate-premium__content premium-data">
-          
+
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
           <div class="premium-data__caption-support support">
@@ -517,7 +536,7 @@
           <input class="premium-field__input" type="text" placeholder="0,00">
         </label>
       </div>
-      
+
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Месяц начисления</span>
         <label class="premium-data__label premium-field premium-field--data">
@@ -533,7 +552,13 @@
         </label>
         <div class="premium-data__support support">
           <button class="support__button"></button>
-          <p class="support__answer support__answer--montly">При расчете отпускных корректируются на&nbsp;коэффициент индексации зарплата и&nbsp;те&nbsp;выплаты, которые увеличиваются одновременно с&nbsp;окладом. Если сумма премии не&nbsp;изменяется, она не&nbsp;корректируется на&nbsp;коэффициент повышения. Если сумма установлена в&nbsp;процентах к&nbsp;окладу, то&nbsp;она корректируется при условии, что процент фиксированный, а&nbsp;не&nbsp;плавающий. Например, сотрудник получает ежемесячную премию&nbsp;&mdash; 25&nbsp;процентов от&nbsp;оклада. Премию установили в&nbsp;зависимости от&nbsp;оклада, поэтому ее&nbsp;индексируют. Если для выплаты установлена &laquo;вилка&raquo;, ее&nbsp;не&nbsp;индексируют.
+          <p class="support__answer support__answer--montly">При расчете отпускных корректируются на&nbsp;коэффициент
+            индексации зарплата и&nbsp;те&nbsp;выплаты, которые увеличиваются одновременно с&nbsp;окладом. Если сумма
+            премии не&nbsp;изменяется, она не&nbsp;корректируется на&nbsp;коэффициент повышения. Если сумма установлена
+            в&nbsp;процентах к&nbsp;окладу, то&nbsp;она корректируется при условии, что процент фиксированный, а&nbsp;не&nbsp;плавающий.
+            Например, сотрудник получает ежемесячную премию&nbsp;&mdash; 25&nbsp;процентов от&nbsp;оклада. Премию
+            установили в&nbsp;зависимости от&nbsp;оклада, поэтому ее&nbsp;индексируют. Если для выплаты установлена
+            &laquo;вилка&raquo;, ее&nbsp;не&nbsp;индексируют.
             <button class="support__answer-close"></button>
           </p>
         </div>
@@ -546,7 +571,7 @@
 
   <template id="premium-template__other-production">
     <div class="calculate-premium__content premium-data">
-          
+
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
           <div class="premium-data__caption-support support">
@@ -560,7 +585,7 @@
           <input class="premium-field__input" type="text" placeholder="0,00">
         </label>
       </div>
-      
+
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Месяц начисления</span>
         <label class="premium-data__label premium-field premium-field--data">
@@ -575,7 +600,7 @@
 
   <template id="supplement-template__supplement">
     <div class="calculate-supplement__content supplement-data supplement-data--supplemen">
-          
+
       <div class="supplement-data__wrapper">
         <span class="premium-data__caption">Сумма надбавки или доплаты
           <div class="premium-data__caption-support support">
@@ -611,7 +636,7 @@
 
   <template id="supplement-template__other-payments">
     <div class="calculate-supplement__content supplement-data supplement-data--supplemen">
-          
+
       <div class="supplement-data__wrapper">
         <span class="premium-data__caption">Сумма надбавки или доплаты
           <div class="premium-data__caption-support support">
@@ -648,7 +673,13 @@
         </label>
         <div class="supplement-data__support support">
           <button class="support__button"></button>
-          <p class="support__answer support__answer--payment">При расчете отпускных корректируются на&nbsp;коэффициент индексации зарплата и&nbsp;те&nbsp;выплаты, которые увеличиваются одновременно с&nbsp;окладом. Если сумма доплаты или надбавки не&nbsp;изменяется, она не&nbsp;корректируется на&nbsp;коэффициент повышения. Если сумма установлена в&nbsp;процентах к&nbsp;окладу, то&nbsp;она корректируется при условии, что процент фиксированный, а&nbsp;не&nbsp;плавающий. Например, сотрудник получает ежемесячную надбавку за&nbsp;стаж работы&nbsp;&mdash; 25&nbsp;процентов от&nbsp;оклада. Надбавку установили в&nbsp;зависимости от&nbsp;оклада, поэтому ее&nbsp;индексируют. Если для выплаты установлена &laquo;вилка&raquo;, ее&nbsp;не&nbsp;индексируют.
+          <p class="support__answer support__answer--payment">При расчете отпускных корректируются на&nbsp;коэффициент
+            индексации зарплата и&nbsp;те&nbsp;выплаты, которые увеличиваются одновременно с&nbsp;окладом. Если сумма
+            доплаты или надбавки не&nbsp;изменяется, она не&nbsp;корректируется на&nbsp;коэффициент повышения. Если
+            сумма установлена в&nbsp;процентах к&nbsp;окладу, то&nbsp;она корректируется при условии, что процент
+            фиксированный, а&nbsp;не&nbsp;плавающий. Например, сотрудник получает ежемесячную надбавку за&nbsp;стаж
+            работы&nbsp;&mdash; 25&nbsp;процентов от&nbsp;оклада. Надбавку установили в&nbsp;зависимости от&nbsp;оклада,
+            поэтому ее&nbsp;индексируют. Если для выплаты установлена &laquo;вилка&raquo;, ее&nbsp;не&nbsp;индексируют.
             <button class="support__answer-close"></button>
           </p>
         </div>
