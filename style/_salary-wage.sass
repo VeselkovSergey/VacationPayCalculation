@@ -1,0 +1,289 @@
+
+// salary - wage
+.step__item-select
+  margin-top: 12px
+  height: 31px
+  padding-left: 11px
+  font-family: inherit
+  font-size: 18px
+  border: 1px solid #A5A5A5
+  border-radius: 2px
+  box-sizing: content-box
+
+.step__item-wage
+  display: none
+
+.salary-data__wrapper,
+.wage-data__wrapper
+  display: flex
+  flex-direction: column
+
+.salary-data__caption,
+.wage-data__caption
+  font-size: 14px
+
+.salary-field,
+.wage-field
+  position: relative
+  width: 148px
+  height: 37px
+  margin-top: 5px
+  font-size: 18px
+  color: #D6D6D6
+
+  &:before
+    content: 'руб'
+    position: absolute
+    top: 50%
+    transform: translateY(-50%)
+    right: 10px
+    font-family: inherit
+    z-index: 2
+
+  &--data
+    &:before
+      display: none
+
+    .salary-field__input
+      width: 100%
+      padding: 0 10px
+      text-align: center
+
+.salary-field__input,
+.wage-field__input
+  position: relative
+  width: 100%
+  height: 100%
+  padding: 0 43px 0 11px
+  background-color: #FFFFFF
+  border: 1px solid #A5A5A5
+  border-radius: 2px
+  transition: 0.3s
+
+  &:hover,
+  &:focus,
+  &:active
+    border-color: #54b7fe
+
+  &::placeholder
+    color: #D6D6D6
+
+// 
+
+.salary-switcher,
+.wage-switcher
+  display: flex
+  align-items: center
+  margin-top: 19px
+  font-size: 18px
+  line-height: 35px
+  cursor: pointer
+  user-select: none
+
+.wage-switcher
+  margin: 0
+
+.salary-switcher__label,
+.wage-switcher__label
+  position: relative
+  display: inline-block
+  width: 19px
+  height: 19px
+  margin-right: 10px
+  background: #FFFFFF
+  border: 2px solid #A5A5A5
+  border-radius: 2px 
+
+.salary-switcher input:checked + .salary-switcher__label
+  background-color: #0074EB
+  border-color: #0074EB
+
+  &:before 
+    content: ''
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    width: 100%
+    height: 100%
+    background: url("../img/icon/icon-checked.svg") no-repeat center
+
+.wage-switcher input:checked + .wage-switcher__label
+  background-color: #0074EB
+  border-color: #0074EB
+
+  &:before 
+    content: ''
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    width: 100%
+    height: 100%
+    background: url("../img/icon/icon-checked.svg") no-repeat center
+
+.calculate-salary
+  display: none
+
+  .calculate-salary__content
+    margin-top: 27px
+
+    .calculate-salary__item
+      display: flex
+      position: relative
+      margin-bottom: 10px
+
+      &:first-of-type
+        .salary-data__hide-fields
+          display: none
+
+      .salary-data__wrapper
+        width: 148px
+
+        &:nth-child(2)
+          margin-left: 16px
+
+        &:last-of-type
+          flex-direction: row
+          align-items: flex-start
+          align-self: flex-end
+          width: 310px
+          margin-left: 70px
+
+.calculate-wage__content
+  margin-top: 50px
+  
+.wage-data__title
+  width: 100%
+  margin-bottom: 12px
+  font-size: 22px
+
+.wage-data
+  display: flex
+  flex-wrap: wrap
+  width: 450px
+  display: none
+
+  .wage-data__wrapper
+    &:last-of-type
+      margin-left: 16px
+
+.wage-data__change
+  position: relative
+  display: flex
+  width: 340px
+  margin-bottom: 10px
+
+.wage-data__add-change
+  order: 2
+  
+.index-switcher
+  display: flex
+  font-size: 14px
+  line-height: 18px
+  cursor: pointer
+  user-select: none
+
+.index-switcher__label
+  position: relative
+  display: inline-block
+  min-width: 19px
+  height: 19px
+  margin-right: 5px
+  background: #FFFFFF
+  border: 2px solid #A5A5A5
+  border-radius: 2px 
+
+.index-switcher input:checked + .index-switcher__label
+  background-color: #0074EB
+  border-color: #0074EB
+  
+  &:before 
+    content: ''
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    width: 100%
+    height: 100%
+    background: url("../img/icon/icon-checked.svg") no-repeat center
+
+
+// wage
+.calculate-wage
+  margin-top: 42px
+
+.calculate-wage__changes
+  display: flex
+
+.calculate-wage__table
+  width: 618px
+  margin-top: 52px
+  padding: 17px 24px 30px 23px
+  background: rgba(0, 116, 235, 0.04)
+  border-radius: 3px
+
+.calculate-wage__table-caption
+  font-size: 16px
+  color: #A5A5A5
+
+.wage-table
+  width: 100%
+  margin-top: 20px
+  border-collapse: collapse
+
+  tr:first-of-type
+    td
+      padding-top: 0
+
+.wage-table__data
+  display: flex
+  align-items: center
+  padding: 13px 0
+  font-size: 16px
+  border-bottom: 1px solid #D6D6D6
+
+  &--result
+    padding-top: 25px
+    font-weight: 700
+    border-bottom: 0
+
+.wage-table__data-label
+  position: relative
+  display: flex
+  margin-left: auto
+  width: 148px
+  height: 37px
+  font-size: 18px
+  color: #D6D6D6
+
+  &:before 
+    content: 'руб'
+    position: absolute
+    top: 50%
+    transform: translateY(-50%)
+    right: 10px
+    font-family: inherit
+    z-index: 2
+
+  &:hover
+    border-color: #54b7fe
+    transition: 0.3s
+
+.wage-table__data-input
+  position: relative
+  width: 100%
+  height: 100%
+  padding: 0 43px 0 11px
+  background-color: #FFFFFF
+  border: 1px solid #A5A5A5
+  border-radius: 2px
+  transition: 0.3s
+
+  &:hover,
+  &:focus,
+  &:active
+    border-color: #54b7fe

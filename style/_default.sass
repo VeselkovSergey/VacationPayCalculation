@@ -1,0 +1,512 @@
+*
+  box-sizing: border-box
+
+body
+  margin: 0
+  font-family: 'ProximaNova', Arial, Helvetica, sans-serif
+  color: #20283C
+h1,h2,h3 
+  margin: 0
+
+ul
+  margin: 0
+  padding: 0
+  list-style-type: none
+
+p
+  margin: 0
+
+a
+  text-decoration: none
+
+button
+  display: flex
+  align-items: center
+  padding: 0
+  font-family: inherit
+  font-size: 18px
+  background-color: transparent
+  border: none
+  cursor: pointer
+  // transition: 0.3s
+
+input 
+  font-family: inherit
+  outline: none
+
+.visually-hidden:not(:focus):not(:active),
+input[type="checkbox"].visually-hidden,
+input[type="radio"].visually-hidden 
+  position: absolute
+  width: 1px
+  height: 1px
+  margin: -1px
+  border: 0
+  padding: 0
+  white-space: nowrap
+  clip-path: inset(100%)
+  clip: rect(0 0 0 0)
+  overflow: hidden
+
+// 
+
+.calculate
+  width: 1030px
+  padding: 45px 60px 85px
+  background: #FFFFFF
+  box-shadow: 4px 4px 28px rgba(0, 0, 0, 0.05)
+  border-radius: 3px
+
+.calculate__title
+  font-size: 30px
+  font-weight: 700
+  line-height: 30px
+
+// 
+
+.calculate__navigation-list
+  margin-top: 25px
+
+.navigation
+  counter-reset: navigation
+  display: flex
+  justify-content: space-between
+  border-bottom: 1px solid #d6d6d6
+
+.navigation__elem
+  position: relative
+  font-size: 18px
+  padding-bottom: 3px
+  line-height: 30px
+
+  &:last-of-type
+    padding-right: 30px
+
+  &:before
+    counter-increment: navigation
+    content: counter(navigation) '.'
+    margin-right: 5px
+
+
+  &--active
+    color: #0074EB
+    &:after
+      content: ''
+      position: absolute
+      left: 0
+      bottom: 0
+      width: 100%
+      height: 1px
+      box-shadow: 0 1px #0074EB
+
+
+// 
+.calculate__step-list
+  margin-top: 35px
+
+.step__item
+  display: none
+
+  &:first-of-type
+    display: block
+
+.support
+  position: relative
+  display: flex
+  align-items: center
+
+.step__title
+  font-size: 22px
+  font-weight: 400
+  line-height: 30px
+
+  &--salary
+    width: 450px
+
+.step__desc
+  display: inline-block
+  width: 420px
+  margin-top: 7px
+  font-size: 16px
+  line-height: 22px
+
+.step__desc-support
+  position: relative
+  top: 4px
+  display: inline-block
+  
+.support__button
+  width: 18px
+  height: 18px
+  margin-left: 10px
+  background: url('../img/icon/icon-question.svg') no-repeat center
+  background-size: contain
+
+  &:hover
+    background-image: url('../img/icon/icon-question-hover.svg')
+
+  &:disabled
+    &:hover
+      cursor: auto
+      background: url('../img/icon/icon-question.svg')
+
+  &--attention
+    margin-left: 5px
+    display: inline-block
+    background: url('../img/icon/icon-attention.svg') no-repeat center
+
+    &:hover
+      background-image: url('../img/icon/icon-attention-hover.svg')
+
+    &:disabled
+      &:hover
+        cursor: auto
+        background: url('../img/icon/icon-attention.svg')
+
+.support__answer
+  position: absolute
+  bottom: calc(100% + 15px)
+  left: 107px
+  width: 330px
+  padding: 25px 21px 14px 14px
+  font-size: 14px
+  line-height: 18px
+  background: #FEFEFE
+  box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.1)
+  border: 1px solid #DDDDDD
+  border-radius: 3px
+  display: none
+
+  &:before
+    content: ''
+    position: absolute
+    bottom: -14px
+    left: 40px
+    width: 15px
+    height: 15px
+    background: url('../img/icon/icon-triangle.svg') no-repeat center
+    background-size: contain
+
+  &--calculation
+    left: -35px
+    bottom: auto
+    top: calc(100% + 15px)
+    width: 508px
+    z-index: 9
+
+    &::before
+      top: -14px
+      bottom: auto
+      transform: rotate(180deg)
+
+
+  &--index
+    width: 480px
+    left: auto
+    right: calc(-100% - 130px)
+
+
+    &:before
+      left: auto
+      right: 160px
+
+  &--wage
+    left: auto
+    right: -110px
+    width: 500px
+
+    &:before
+      left: auto
+      right: 110px
+
+  &--summ
+    left: -35px
+    bottom: auto
+    top: calc(100% + 15px)
+    width: 537px
+    z-index: 9
+
+    &::before
+      top: -14px
+      bottom: auto
+      transform: rotate(180deg)
+
+  &--summ-short
+    width: 300px
+
+  &--montly
+    width: 420px
+    bottom: calc(100% + 15px)
+    left: -30px
+
+  &--payment
+    width: 500px
+    bottom: calc(100% + 15px)
+    left: -30px
+    
+.support__answer-close
+  position: absolute
+  top: 10px
+  right: 10px
+  width: 13px
+  height: 13px
+  background: url('../img/icon/icon-close.svg') no-repeat center
+
+.step__data
+  margin-top: 26px
+
+.vacation
+  display: flex
+  //justify-content: space-between
+  //width: 460px
+
+.vacation__label
+  display: flex
+  flex-direction: column
+  //width: 148px
+  margin-right: 10px
+
+.vacation__input
+  width: 100%
+  height: 37px
+  margin-top: 3px
+  padding: 9px 10px
+  border: 1px solid #A5A5A5
+  border-radius: 2px
+  transition: 0.3s
+
+  &--day
+    width: 61px
+
+  &::placeholder
+    color: #D6D6D6
+
+  &:focus,
+  &:active
+    border-color: #0074EB
+
+  &.not-valid
+    border-color: #eb0000
+
+.include-holidays
+  display: none
+  &.--active
+    display: unset
+
+// 
+.calculate__btns
+  margin-top: 64px
+
+.step-buttons
+  display: flex
+
+.step-buttons__prev,
+.step-buttons__next
+  position: relative
+  justify-content: center
+  height: 41px
+  color: #0074EB
+  border: 1px solid #0074EB
+  border-radius: 3px
+
+  &:before
+    content: ''
+    position: absolute
+    top: 50%
+    transform: translateY(-50%)
+    width: 25px
+    height: 15px
+  
+.step-buttons__next
+  width: 260px
+  background-color: #0074EB
+  color: #ffffff
+
+  &:hover
+    background-color: #2c94ff
+    border-color: #2c94ff
+
+  &:disabled
+    color: #ffffff
+    background-color: #A7B3BF
+    border-color: #A7B3BF
+  
+    &:hover
+      color: #ffffff
+      background-color: #A7B3BF
+
+.step-buttons__prev
+  width: 212px
+  margin-right: 20px
+  display: none
+
+.step-buttons__prev--arrow
+  justify-content: start
+  padding-left: 90px
+  
+  &:before
+    left: 62px
+    background: url('../img/icon/icon-prev-bl.svg') no-repeat center
+    background-size: contain
+
+.step-buttons__next--arrow
+  justify-content: flex-end
+  padding-right: 64px
+  width: 212px
+  
+  &:before
+    right: 35px
+    background: url('../img/icon/icon-next.svg') no-repeat center
+    background-size: contain
+
+// 
+.calculate-period
+  display: none
+
+.calculate-period__field
+  display: flex
+  align-items: center
+  margin-top: 19px
+  font-size: 18px
+  line-height: 35px
+  cursor: pointer
+  user-select: none
+
+.calculate-period__label
+  position: relative
+  display: inline-block
+  width: 19px
+  height: 19px
+  margin-right: 10px
+  background: #FFFFFF
+  border: 2px solid #A5A5A5
+  border-radius: 2px 
+
+.calculate-period__field input:checked + .calculate-period__label 
+  background-color: #0074EB
+  border-color: #0074EB
+
+  &:before 
+    content: ''
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    width: 100%
+    height: 100%
+    background: url("../img/icon/icon-checked.svg") no-repeat center
+
+.calculate-period__support
+  width: 830px
+  margin-top: 20px
+  padding: 27px 41px 29px 27px
+  font-size: 14px 
+  line-height: 18px
+  background: #FFFFFF
+  border: 1px solid #DDDDDD
+  box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.1)
+  border-radius: 3px
+
+.except-dates
+  margin-top: 35px
+
+.except-dates__title
+  font-size: 22px
+  font-weight: 400
+
+.except-dates__wrapper
+  position: relative
+  display: flex
+  width: 336px
+  margin-top: 12px
+
+  &:first-of-type
+    .except-dates__hide-fields
+      display: none
+
+.except-dates__field
+  width: 148px
+
+  &:last-of-type
+    margin-left: 16px
+
+.calculate-period__add-except,
+.wage-data__add-change,
+.calculate-salary__add-except
+  position: relative
+  margin-top: 12px
+  padding-left: 16px
+  font-size: 14px
+  color: #0074EB
+
+  &:before
+    content: ''
+    position: absolute
+    top: 50%
+    left: 0
+    transform: translateY(-50%)
+    width: 13px
+    height: 13px
+    background: url('../img/icon/icon-plus.svg') no-repeat center
+    background-size: contain
+
+.except-dates__hide-fields,
+.wage-data__hide-fields,
+.salary-data__hide-fields,
+.premium-data__hide-fields
+  position: absolute
+  top: 30px
+  right: 0
+  width: 14px
+  height: 14px
+  background: url('../img/icon/icon-close.svg') no-repeat center
+  background-size: contain
+
+.premium-data__hide-fields
+  right: unset
+  left: 330px
+  top: 34px
+
+.premium-data
+  &--half-yaer
+    .premium-data__hide-fields
+      left: 665px
+
+.supplement-data
+  .premium-data__hide-fields
+    left: 580px
+
+
+.salary-data__hide-fields
+  left: 325px
+
+// 
+.except-dates__help
+  margin-top: 32px
+
+.except-help
+  width: 620px
+  padding: 17px 24px 23px 23px
+  background: rgba(0, 116, 235, 0.04)
+  border-radius: 3px
+
+.except-help__caption
+  font-size: 16px
+  line-height: 22px
+  color: #A5A5A5
+
+.except-help__example
+  display: block
+  margin: 20px 0 12px
+  padding-bottom: 16px
+  border-bottom: 1px solid #D6D6D6
+  font-size: 16px
+
+.except-help__note
+  font-size: 16px
+  line-height: 22px
+
+.calculate-premium__content,
+.calculate-supplement__content
+  position: relative

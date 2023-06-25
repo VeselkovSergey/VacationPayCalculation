@@ -1,0 +1,1177 @@
+@charset "UTF-8";
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "ProximaNova", Arial, Helvetica, sans-serif;
+  color: #20283C;
+}
+
+h1, h2, h3 {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  font-family: inherit;
+  font-size: 18px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+input {
+  font-family: inherit;
+  outline: none;
+}
+
+.visually-hidden:not(:focus):not(:active),
+input[type=checkbox].visually-hidden,
+input[type=radio].visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+.calculate {
+  width: 1030px;
+  padding: 45px 60px 85px;
+  background: #FFFFFF;
+  box-shadow: 4px 4px 28px rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.calculate__title {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 30px;
+}
+
+.calculate__navigation-list {
+  margin-top: 25px;
+}
+
+.navigation {
+  counter-reset: navigation;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #d6d6d6;
+}
+
+.navigation__elem {
+  position: relative;
+  font-size: 18px;
+  padding-bottom: 3px;
+  line-height: 30px;
+}
+.navigation__elem:last-of-type {
+  padding-right: 30px;
+}
+.navigation__elem:before {
+  counter-increment: navigation;
+  content: counter(navigation) ".";
+  margin-right: 5px;
+}
+.navigation__elem--active {
+  color: #0074EB;
+}
+.navigation__elem--active:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  box-shadow: 0 1px #0074EB;
+}
+
+.calculate__step-list {
+  margin-top: 35px;
+}
+
+.step__item {
+  display: none;
+}
+.step__item:first-of-type {
+  display: block;
+}
+
+.support {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.step__title {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 30px;
+}
+.step__title--salary {
+  width: 450px;
+}
+
+.step__desc {
+  display: inline-block;
+  width: 420px;
+  margin-top: 7px;
+  font-size: 16px;
+  line-height: 22px;
+}
+
+.step__desc-support {
+  position: relative;
+  top: 4px;
+  display: inline-block;
+}
+
+.support__button {
+  width: 18px;
+  height: 18px;
+  margin-left: 10px;
+  background: url("../img/icon/icon-question.svg") no-repeat center;
+  background-size: contain;
+}
+.support__button:hover {
+  background-image: url("../img/icon/icon-question-hover.svg");
+}
+.support__button:disabled:hover {
+  cursor: auto;
+  background: url("../img/icon/icon-question.svg");
+}
+.support__button--attention {
+  margin-left: 5px;
+  display: inline-block;
+  background: url("../img/icon/icon-attention.svg") no-repeat center;
+}
+.support__button--attention:hover {
+  background-image: url("../img/icon/icon-attention-hover.svg");
+}
+.support__button--attention:disabled:hover {
+  cursor: auto;
+  background: url("../img/icon/icon-attention.svg");
+}
+
+.support__answer {
+  position: absolute;
+  bottom: calc(100% + 15px);
+  left: 107px;
+  width: 330px;
+  padding: 25px 21px 14px 14px;
+  font-size: 14px;
+  line-height: 18px;
+  background: #FEFEFE;
+  box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.1);
+  border: 1px solid #DDDDDD;
+  border-radius: 3px;
+  display: none;
+}
+.support__answer:before {
+  content: "";
+  position: absolute;
+  bottom: -14px;
+  left: 40px;
+  width: 15px;
+  height: 15px;
+  background: url("../img/icon/icon-triangle.svg") no-repeat center;
+  background-size: contain;
+}
+.support__answer--calculation {
+  left: -35px;
+  bottom: auto;
+  top: calc(100% + 15px);
+  width: 508px;
+  z-index: 9;
+}
+.support__answer--calculation::before {
+  top: -14px;
+  bottom: auto;
+  transform: rotate(180deg);
+}
+.support__answer--index {
+  width: 480px;
+  left: auto;
+  right: calc(-100% - 130px);
+}
+.support__answer--index:before {
+  left: auto;
+  right: 160px;
+}
+.support__answer--wage {
+  left: auto;
+  right: -110px;
+  width: 500px;
+}
+.support__answer--wage:before {
+  left: auto;
+  right: 110px;
+}
+.support__answer--summ {
+  left: -35px;
+  bottom: auto;
+  top: calc(100% + 15px);
+  width: 537px;
+  z-index: 9;
+}
+.support__answer--summ::before {
+  top: -14px;
+  bottom: auto;
+  transform: rotate(180deg);
+}
+.support__answer--summ-short {
+  width: 300px;
+}
+.support__answer--montly {
+  width: 420px;
+  bottom: calc(100% + 15px);
+  left: -30px;
+}
+.support__answer--payment {
+  width: 500px;
+  bottom: calc(100% + 15px);
+  left: -30px;
+}
+
+.support__answer-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 13px;
+  height: 13px;
+  background: url("../img/icon/icon-close.svg") no-repeat center;
+}
+
+.step__data {
+  margin-top: 26px;
+}
+
+.vacation {
+  display: flex;
+}
+
+.vacation__label {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+}
+
+.vacation__input {
+  width: 100%;
+  height: 37px;
+  margin-top: 3px;
+  padding: 9px 10px;
+  border: 1px solid #A5A5A5;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+.vacation__input--day {
+  width: 61px;
+}
+.vacation__input::placeholder {
+  color: #D6D6D6;
+}
+.vacation__input:focus, .vacation__input:active {
+  border-color: #0074EB;
+}
+.vacation__input.not-valid {
+  border-color: #eb0000;
+}
+
+.include-holidays {
+  display: none;
+}
+.include-holidays.--active {
+  display: unset;
+}
+
+.calculate__btns {
+  margin-top: 64px;
+}
+
+.step-buttons {
+  display: flex;
+}
+
+.step-buttons__prev,
+.step-buttons__next {
+  position: relative;
+  justify-content: center;
+  height: 41px;
+  color: #0074EB;
+  border: 1px solid #0074EB;
+  border-radius: 3px;
+}
+.step-buttons__prev:before,
+.step-buttons__next:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 25px;
+  height: 15px;
+}
+
+.step-buttons__next {
+  width: 260px;
+  background-color: #0074EB;
+  color: #ffffff;
+}
+.step-buttons__next:hover {
+  background-color: #2c94ff;
+  border-color: #2c94ff;
+}
+.step-buttons__next:disabled {
+  color: #ffffff;
+  background-color: #A7B3BF;
+  border-color: #A7B3BF;
+}
+.step-buttons__next:disabled:hover {
+  color: #ffffff;
+  background-color: #A7B3BF;
+}
+
+.step-buttons__prev {
+  width: 212px;
+  margin-right: 20px;
+  display: none;
+}
+
+.step-buttons__prev--arrow {
+  justify-content: start;
+  padding-left: 90px;
+}
+.step-buttons__prev--arrow:before {
+  left: 62px;
+  background: url("../img/icon/icon-prev-bl.svg") no-repeat center;
+  background-size: contain;
+}
+
+.step-buttons__next--arrow {
+  justify-content: flex-end;
+  padding-right: 64px;
+  width: 212px;
+}
+.step-buttons__next--arrow:before {
+  right: 35px;
+  background: url("../img/icon/icon-next.svg") no-repeat center;
+  background-size: contain;
+}
+
+.calculate-period {
+  display: none;
+}
+
+.calculate-period__field {
+  display: flex;
+  align-items: center;
+  margin-top: 19px;
+  font-size: 18px;
+  line-height: 35px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.calculate-period__label {
+  position: relative;
+  display: inline-block;
+  width: 19px;
+  height: 19px;
+  margin-right: 10px;
+  background: #FFFFFF;
+  border: 2px solid #A5A5A5;
+  border-radius: 2px;
+}
+
+.calculate-period__field input:checked + .calculate-period__label {
+  background-color: #0074EB;
+  border-color: #0074EB;
+}
+.calculate-period__field input:checked + .calculate-period__label:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../img/icon/icon-checked.svg") no-repeat center;
+}
+
+.calculate-period__support {
+  width: 830px;
+  margin-top: 20px;
+  padding: 27px 41px 29px 27px;
+  font-size: 14px;
+  line-height: 18px;
+  background: #FFFFFF;
+  border: 1px solid #DDDDDD;
+  box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.except-dates {
+  margin-top: 35px;
+}
+
+.except-dates__title {
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.except-dates__wrapper {
+  position: relative;
+  display: flex;
+  width: 336px;
+  margin-top: 12px;
+}
+.except-dates__wrapper:first-of-type .except-dates__hide-fields {
+  display: none;
+}
+
+.except-dates__field {
+  width: 148px;
+}
+.except-dates__field:last-of-type {
+  margin-left: 16px;
+}
+
+.calculate-period__add-except,
+.wage-data__add-change,
+.calculate-salary__add-except {
+  position: relative;
+  margin-top: 12px;
+  padding-left: 16px;
+  font-size: 14px;
+  color: #0074EB;
+}
+.calculate-period__add-except:before,
+.wage-data__add-change:before,
+.calculate-salary__add-except:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 13px;
+  height: 13px;
+  background: url("../img/icon/icon-plus.svg") no-repeat center;
+  background-size: contain;
+}
+
+.except-dates__hide-fields,
+.wage-data__hide-fields,
+.salary-data__hide-fields,
+.premium-data__hide-fields {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  background: url("../img/icon/icon-close.svg") no-repeat center;
+  background-size: contain;
+}
+
+.premium-data__hide-fields {
+  right: unset;
+  left: 330px;
+  top: 34px;
+}
+
+.premium-data--half-yaer .premium-data__hide-fields {
+  left: 665px;
+}
+
+.supplement-data .premium-data__hide-fields {
+  left: 580px;
+}
+
+.salary-data__hide-fields {
+  left: 325px;
+}
+
+.except-dates__help {
+  margin-top: 32px;
+}
+
+.except-help {
+  width: 620px;
+  padding: 17px 24px 23px 23px;
+  background: rgba(0, 116, 235, 0.04);
+  border-radius: 3px;
+}
+
+.except-help__caption {
+  font-size: 16px;
+  line-height: 22px;
+  color: #A5A5A5;
+}
+
+.except-help__example {
+  display: block;
+  margin: 20px 0 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #D6D6D6;
+  font-size: 16px;
+}
+
+.except-help__note {
+  font-size: 16px;
+  line-height: 22px;
+}
+
+.calculate-premium__content,
+.calculate-supplement__content {
+  position: relative;
+}
+
+.step__item-select {
+  margin-top: 12px;
+  height: 31px;
+  padding-left: 11px;
+  font-family: inherit;
+  font-size: 18px;
+  border: 1px solid #A5A5A5;
+  border-radius: 2px;
+  box-sizing: content-box;
+}
+
+.step__item-wage {
+  display: none;
+}
+
+.salary-data__wrapper,
+.wage-data__wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.salary-data__caption,
+.wage-data__caption {
+  font-size: 14px;
+}
+
+.salary-field,
+.wage-field {
+  position: relative;
+  width: 148px;
+  height: 37px;
+  margin-top: 5px;
+  font-size: 18px;
+  color: #D6D6D6;
+}
+.salary-field:before,
+.wage-field:before {
+  content: "руб";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+  font-family: inherit;
+  z-index: 2;
+}
+.salary-field--data:before,
+.wage-field--data:before {
+  display: none;
+}
+.salary-field--data .salary-field__input,
+.wage-field--data .salary-field__input {
+  width: 100%;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.salary-field__input,
+.wage-field__input {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0 43px 0 11px;
+  background-color: #FFFFFF;
+  border: 1px solid #A5A5A5;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+.salary-field__input:hover, .salary-field__input:focus, .salary-field__input:active,
+.wage-field__input:hover,
+.wage-field__input:focus,
+.wage-field__input:active {
+  border-color: #54b7fe;
+}
+.salary-field__input::placeholder,
+.wage-field__input::placeholder {
+  color: #D6D6D6;
+}
+
+.salary-switcher,
+.wage-switcher {
+  display: flex;
+  align-items: center;
+  margin-top: 19px;
+  font-size: 18px;
+  line-height: 35px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.wage-switcher {
+  margin: 0;
+}
+
+.salary-switcher__label,
+.wage-switcher__label {
+  position: relative;
+  display: inline-block;
+  width: 19px;
+  height: 19px;
+  margin-right: 10px;
+  background: #FFFFFF;
+  border: 2px solid #A5A5A5;
+  border-radius: 2px;
+}
+
+.salary-switcher input:checked + .salary-switcher__label {
+  background-color: #0074EB;
+  border-color: #0074EB;
+}
+.salary-switcher input:checked + .salary-switcher__label:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../img/icon/icon-checked.svg") no-repeat center;
+}
+
+.wage-switcher input:checked + .wage-switcher__label {
+  background-color: #0074EB;
+  border-color: #0074EB;
+}
+.wage-switcher input:checked + .wage-switcher__label:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../img/icon/icon-checked.svg") no-repeat center;
+}
+
+.calculate-salary {
+  display: none;
+}
+.calculate-salary .calculate-salary__content {
+  margin-top: 27px;
+}
+.calculate-salary .calculate-salary__content .calculate-salary__item {
+  display: flex;
+  position: relative;
+  margin-bottom: 10px;
+}
+.calculate-salary .calculate-salary__content .calculate-salary__item:first-of-type .salary-data__hide-fields {
+  display: none;
+}
+.calculate-salary .calculate-salary__content .calculate-salary__item .salary-data__wrapper {
+  width: 148px;
+}
+.calculate-salary .calculate-salary__content .calculate-salary__item .salary-data__wrapper:nth-child(2) {
+  margin-left: 16px;
+}
+.calculate-salary .calculate-salary__content .calculate-salary__item .salary-data__wrapper:last-of-type {
+  flex-direction: row;
+  align-items: flex-start;
+  align-self: flex-end;
+  width: 310px;
+  margin-left: 70px;
+}
+
+.calculate-wage__content {
+  margin-top: 50px;
+}
+
+.wage-data__title {
+  width: 100%;
+  margin-bottom: 12px;
+  font-size: 22px;
+}
+
+.wage-data {
+  display: flex;
+  flex-wrap: wrap;
+  width: 450px;
+  display: none;
+}
+.wage-data .wage-data__wrapper:last-of-type {
+  margin-left: 16px;
+}
+
+.wage-data__change {
+  position: relative;
+  display: flex;
+  width: 340px;
+  margin-bottom: 10px;
+}
+
+.wage-data__add-change {
+  order: 2;
+}
+
+.index-switcher {
+  display: flex;
+  font-size: 14px;
+  line-height: 18px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.index-switcher__label {
+  position: relative;
+  display: inline-block;
+  min-width: 19px;
+  height: 19px;
+  margin-right: 5px;
+  background: #FFFFFF;
+  border: 2px solid #A5A5A5;
+  border-radius: 2px;
+}
+
+.index-switcher input:checked + .index-switcher__label {
+  background-color: #0074EB;
+  border-color: #0074EB;
+}
+.index-switcher input:checked + .index-switcher__label:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../img/icon/icon-checked.svg") no-repeat center;
+}
+
+.calculate-wage {
+  margin-top: 42px;
+}
+
+.calculate-wage__changes {
+  display: flex;
+}
+
+.calculate-wage__table {
+  width: 618px;
+  margin-top: 52px;
+  padding: 17px 24px 30px 23px;
+  background: rgba(0, 116, 235, 0.04);
+  border-radius: 3px;
+}
+
+.calculate-wage__table-caption {
+  font-size: 16px;
+  color: #A5A5A5;
+}
+
+.wage-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+.wage-table tr:first-of-type td {
+  padding-top: 0;
+}
+
+.wage-table__data {
+  display: flex;
+  align-items: center;
+  padding: 13px 0;
+  font-size: 16px;
+  border-bottom: 1px solid #D6D6D6;
+}
+.wage-table__data--result {
+  padding-top: 25px;
+  font-weight: 700;
+  border-bottom: 0;
+}
+
+.wage-table__data-label {
+  position: relative;
+  display: flex;
+  margin-left: auto;
+  width: 148px;
+  height: 37px;
+  font-size: 18px;
+  color: #D6D6D6;
+}
+.wage-table__data-label:before {
+  content: "руб";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+  font-family: inherit;
+  z-index: 2;
+}
+.wage-table__data-label:hover {
+  border-color: #54b7fe;
+  transition: 0.3s;
+}
+
+.wage-table__data-input {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0 43px 0 11px;
+  background-color: #FFFFFF;
+  border: 1px solid #A5A5A5;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+.wage-table__data-input:hover, .wage-table__data-input:focus, .wage-table__data-input:active {
+  border-color: #54b7fe;
+}
+
+.calculate__bonus-select {
+  margin-top: 12px;
+  height: 31px;
+  padding-left: 11px;
+  font-family: inherit;
+  font-size: 18px;
+  border: 1px solid #A5A5A5;
+  border-radius: 2px;
+  box-sizing: content-box;
+}
+
+.premium-data,
+.supplement-data {
+  display: grid;
+  grid-template-columns: repeat(2, 148px);
+  grid-column-gap: 20px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  padding-bottom: 35px;
+  border-bottom: 1px solid #d6d6d6;
+}
+.premium-data:last-of-type,
+.supplement-data:last-of-type {
+  margin-bottom: 0;
+}
+.premium-data--half-yaer,
+.supplement-data--half-yaer {
+  grid-template-columns: 148px 148px 318px;
+}
+
+.supplement-data--supplemen {
+  grid-template-columns: 230px 318px;
+}
+
+.bonus-type {
+  display: flex;
+  width: 330px;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.bonus-type__btn {
+  width: 145px;
+  position: relative;
+  padding-left: 16px;
+  font-size: 14px;
+  color: #0074EB;
+}
+.bonus-type__btn:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 13px;
+  height: 13px;
+  background: url("../img/icon/icon-plus.svg") no-repeat center;
+  background-size: contain;
+}
+
+.select-premium,
+.select-supplement {
+  width: 610px;
+  border: 1px solid #A5A5A5;
+  border-radius: 2px;
+  display: none;
+}
+
+.calculate-premium,
+.calculate-supplement {
+  margin-top: 40px;
+}
+
+.premium-data__wrapper,
+.supplement-data__wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.premium-data__wrapper-period,
+.supplement-data__wrapper-period {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.premium-data__wrapper-period::before,
+.supplement-data__wrapper-period::before {
+  content: "—";
+  position: absolute;
+  left: 50%;
+  top: 65%;
+  transform: translate(-50%, -50%);
+  color: #D6D6D6;
+}
+
+.premium-data__caption,
+.supplement-data__caption {
+  font-size: 14px;
+}
+
+.premium-data__caption {
+  display: flex;
+}
+
+.premium-field,
+.supplement-field {
+  position: relative;
+  width: 148px;
+  height: 37px;
+  margin-top: 5px;
+  font-size: 18px;
+  color: #D6D6D6;
+}
+.premium-field:before,
+.supplement-field:before {
+  content: "руб";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+  font-family: inherit;
+  z-index: 2;
+}
+.premium-field--data:before,
+.supplement-field--data:before {
+  display: none;
+}
+.premium-field--data .premium-field__input,
+.supplement-field--data .premium-field__input {
+  width: 100%;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.premium-field__input,
+.supplement-field__input {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0 43px 0 11px;
+  background-color: #FFFFFF;
+  border: 1px solid #A5A5A5;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+.premium-field__input:hover, .premium-field__input:focus, .premium-field__input:active,
+.supplement-field__input:hover,
+.supplement-field__input:focus,
+.supplement-field__input:active {
+  border-color: #54b7fe;
+}
+.premium-field__input::placeholder,
+.supplement-field__input::placeholder {
+  color: #D6D6D6;
+}
+
+.premium-data__switcher,
+.supplement-data__switcher {
+  display: flex;
+  width: 500px;
+  margin-top: 40px;
+}
+
+.montly-switcher {
+  display: flex;
+  font-size: 14px;
+  line-height: 18px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.montly-switcher__label {
+  position: relative;
+  display: inline-block;
+  min-width: 19px;
+  height: 19px;
+  margin-right: 5px;
+  background: #FFFFFF;
+  border: 2px solid #A5A5A5;
+  border-radius: 2px;
+}
+
+.montly-switcher input:checked + .montly-switcher__label {
+  background-color: #0074EB;
+  border-color: #0074EB;
+}
+.montly-switcher input:checked + .montly-switcher__label:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../img/icon/icon-checked.svg") no-repeat center;
+}
+
+.payment-switcher {
+  display: flex;
+  font-size: 14px;
+  line-height: 18px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.payment-switcher__label {
+  position: relative;
+  display: inline-block;
+  min-width: 19px;
+  height: 19px;
+  margin-right: 5px;
+  background: #FFFFFF;
+  border: 2px solid #A5A5A5;
+  border-radius: 2px;
+}
+
+.payment-switcher input:checked + .payment-switcher__label {
+  background-color: #0074EB;
+  border-color: #0074EB;
+}
+.payment-switcher input:checked + .payment-switcher__label:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../img/icon/icon-checked.svg") no-repeat center;
+}
+
+.calculate__result-value {
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 30px;
+}
+
+.calculate__result {
+  margin-top: 25px;
+}
+
+.result-calculate {
+  width: 630px;
+  padding: 17px 42px 25px 23px;
+  background: rgba(0, 116, 235, 0.04);
+  border-radius: 3px;
+}
+.result-calculate span {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+  line-height: 22px;
+}
+
+.result-calculate__caption {
+  padding-bottom: 10px;
+  color: #A5A5A5;
+  border-bottom: 1px solid #D6D6D6;
+}
+
+.calculate__result-table {
+  margin-top: 52px;
+}
+
+.table-result {
+  width: 100%;
+  color: #969696;
+  border-collapse: collapse;
+}
+.table-result th {
+  font-size: 18px;
+  line-height: 30px;
+  font-weight: 400;
+  border-bottom: 1px solid #D6D6D6;
+  padding-bottom: 8px;
+}
+.table-result td {
+  font-size: 16px;
+  line-height: 22px;
+  border-bottom: 1px solid #D6D6D6;
+}
+
+.calculate__btns-result {
+  display: flex;
+  margin-top: 52px;
+}
+
+.calculate__btn-result,
+.calculate__restart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 212px;
+  height: 41px;
+  font-family: inherit;
+  font-size: 18px;
+  border-radius: 3px;
+}
+
+.calculate__btn-result {
+  background-color: #0074EB;
+  color: #ffffff;
+}
+
+.calculate__restart {
+  margin-left: 20px;
+  border: 1px solid #0074EB;
+  color: #0074EB;
+}
+
+/*# sourceMappingURL=style.css.map */
