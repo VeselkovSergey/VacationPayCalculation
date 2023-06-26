@@ -29,6 +29,10 @@ const includeHolidaysDaysElement = $("body > section > ul.calculate__step-list.s
 const startDateInputBillingPeriod = $("body > section > ul.calculate__step-list.step > li:nth-child(2) > div.step__data.vacation > label:nth-child(1) > input")
 const endDateInputBillingPeriod = $("body > section > ul.calculate__step-list.step > li:nth-child(2) > div.step__data.vacation > label:nth-child(2) > input")
 const countDaysInputBillingPeriod = $("body > section > ul.calculate__step-list.step > li:nth-child(2) > div.step__data.vacation > label:nth-child(3) > input")
+const countDaysSpanBillingPeriod = $(".countDaysSpanBillingPeriod")
+const countMonthSpanBillingPeriod = $(".countMonthSpanBillingPeriod")
+const averageCountDaysSpanBillingPeriod = $(".averageCountDaysSpanBillingPeriod")
+const calculateExample = $(".except-help__example")
 
 const salaryDateTextElement = $("body > section > ul.calculate__step-list.step > li:nth-child(3) > div.step__item-salary > div.step__data.salary-data > div > span > span")
 
@@ -98,7 +102,7 @@ btnPrev.addEventListener('click', function () {
 })
 
 $(function () {
-    $(".input-data").datepicker({
+    $(".input-data, .except-data").datepicker({
         changeMonth: true,
         changeYear: true,
         // minDate: new Date("2023-01-01"),
@@ -119,6 +123,15 @@ stepList.addEventListener('click', function (e) {
     }
     if (e.target.classList.contains('support__answer-close')) {
         e.target.parentElement.style.display = 'none'
+    }
+})
+
+document.body.addEventListener("input", (evn) => {
+    if (evn.target.classList.contains("hasDatepicker")) {
+        const value = evn.target.value.replaceAll(".", "")
+        if (value.length >= 8) {
+            evn.target.value = `${value[0]}${value[1]}.${value[2]}${value[3]}.${value[4]}${value[5]}${value[6]}${value[7]}`
+        }
     }
 })
 
@@ -211,20 +224,63 @@ function setBillingPeriod(startDate) {
     const startDateObject = dateConvertToObject(startDate)
     const startDateBillingPeriod = getFirstDayOnMonthByDate(parseDate(`1.${startDateObject.month - 1}.${startDateObject.year - 1}`))
     const endDateBillingPeriod = getLastDayOnMonthByDate(parseDate(`${startDateObject.day}.${startDateObject.month - 1}.${startDateObject.year}`))
-    startDateInputBillingPeriod.datepicker('setDate', startDateBillingPeriod)
-    endDateInputBillingPeriod.datepicker('setDate', endDateBillingPeriod)
-    countDaysInputBillingPeriod.val(29.3 * 12) // 351,6
-    countDaysInputBillingPeriod.attr("disabled", true)
-    salaryDateTextElement.html(`${monthsByIndex[startDateObject.month - 1]} ${startDateObject.year - (startDateObject.month - 1 === 11 ? 2 : 1)}`)
 
-    $(".except-data").datepicker({
+    $(".billing-period .vacation__input").datepicker("option", {
         changeMonth: true,
         changeYear: true,
         minDate: startDateBillingPeriod,
         maxDate: endDateBillingPeriod,
         onSelect: function(dateText) {
-            getCountValidDays()
+            setIntervalForRelationToBillingPeriod()
+            checkAndSetCountValidDays()
         },
+    })
+
+    startDateInputBillingPeriod.datepicker('setDate', startDateBillingPeriod)
+    endDateInputBillingPeriod.datepicker('setDate', endDateBillingPeriod)
+    setCountDaysInputBillingPeriod(351.6, 12, null)
+    countDaysInputBillingPeriod.attr("disabled", true)
+    salaryDateTextElement.html(`${monthsByIndex[startDateObject.month - 1]} ${startDateObject.year - (startDateObject.month - 1 === 11 ? 2 : 1)}`)
+
+    setIntervalForRelationToBillingPeriod()
+}
+
+function setCountDaysInputBillingPeriod(days, countMonth, daysInNotFullMonth) {
+    countDaysInputBillingPeriod.val(days)
+    countDaysSpanBillingPeriod.html(days)
+    countMonthSpanBillingPeriod.each(function () {
+        this.innerHTML = countMonth
+    })
+
+    const totalDays = parseFloat((Number(days) / Number(countMonth)).toFixed(4))
+
+    if (daysInNotFullMonth) {
+
+        calculateExample.html(`${countMonth + Math.floor(daysInNotFullMonth / 29.3)} мес. х 29,3 дн. + ${parseFloat((daysInNotFullMonth - (Math.floor(daysInNotFullMonth / 29.3)) * 29.3).toFixed(4))} дн. = ${parseFloat((days + daysInNotFullMonth).toFixed(4))} дн.`)
+    } else {
+        calculateExample.html(`${countMonth} мес. х 29,3 дн. = ${days} дн.`)
+    }
+    averageCountDaysSpanBillingPeriod.each(function () {
+        this.innerHTML = totalDays
+    })
+}
+
+function setIntervalForRelationToBillingPeriod() {
+    $(".except-data").datepicker("option", {
+        changeMonth: true,
+        changeYear: true,
+        minDate: parseDate(startDateInputBillingPeriod.val()),
+        maxDate: parseDate(endDateInputBillingPeriod.val()),
+        onSelect: function(dateText) {
+            checkAndSetCountValidDays()
+        },
+    })
+
+    $(".calculate-salary__item .input-data, .wage-data__change .input-data").datepicker("option", {
+        changeMonth: true,
+        changeYear: true,
+        minDate: parseDate(startDateInputBillingPeriod.val()),
+        maxDate: parseDate(endDateInputBillingPeriod.val()),
     })
 }
 

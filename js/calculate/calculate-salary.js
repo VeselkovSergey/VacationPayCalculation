@@ -62,11 +62,15 @@ calculateSalaryAddExceptButton.addEventListener("click", () => {
   const salaryItemsContainer = document.body.querySelector(".calculate-salary__content")
   salaryItemsContainer.append(salaryItemContainerEl)
 
-  $(".input-data").datepicker({
+  $(".calculate-salary__item .input-data").datepicker("destroy")
+  $(".calculate-salary__item .input-data").datepicker({
     changeMonth: true,
     changeYear: true,
     minDate: parseDate(startDateInputBillingPeriod.val()),
     maxDate: parseDate(endDateInputBillingPeriod.val()),
+    onSelect: function(dateText) {
+      checkCrossDate(salaryItemsContainer, ".calculate-salary__item .input-data")
+    },
   })
 })
 
@@ -106,4 +110,22 @@ function checkForOpenNextBtn() {
       }
     }
   }
+}
+
+function checkCrossDate(container, queryDateInput) {
+  container.querySelectorAll(queryDateInput).forEach((date, key) => {
+    let isValid = true
+    container.querySelectorAll(queryDateInput).forEach((checkDate, key2) => {
+      if (date.value && checkDate.value) {
+        if (key !== key2 && checkDateBetweenDates(date.value, date.value, checkDate.value)) {
+          isValid = false
+        }
+      }
+    })
+    if (!isValid) {
+      date.classList.add("not-valid")
+    } else {
+      date.classList.remove("not-valid")
+    }
+  })
 }

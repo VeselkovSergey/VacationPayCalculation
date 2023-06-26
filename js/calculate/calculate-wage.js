@@ -24,7 +24,7 @@ btnAddChange.addEventListener("click", function () {
     `<div class="wage-data__wrapper">
       <span class="wage-data__caption">Дата изменения</span>
       <label class="wage-data__label wage-field wage-field--data">
-        <input class="wage-field__input wage-date" type="text" placeholder="ДД.ММ.ГГГГ" data-wage-start="${"val_" + ChangeDatesStartCounter}">
+        <input class="wage-field__input input-data" type="text" placeholder="ДД.ММ.ГГГГ" data-wage-start="${"val_" + ChangeDatesStartCounter}">
       </label>
     </div>
 
@@ -41,11 +41,15 @@ btnAddChange.addEventListener("click", function () {
   wageData.append(wageDataWrapper)
 
   $(function () {
-    $(".wage-date").datepicker({
+    $(".wage-data__change .input-data").datepicker("destroy")
+    $(".wage-data__change .input-data").datepicker({
       changeMonth: true,
       changeYear: true,
-      minDate: new Date("2022-01-01"),
-      yearRange: "2022:2023",
+      minDate: parseDate(startDateInputBillingPeriod.val()),
+      maxDate: parseDate(endDateInputBillingPeriod.val()),
+      onSelect: function(dateText) {
+        checkCrossDate(wageData, ".wage-data__change .input-data")
+      },
     })
   })
 

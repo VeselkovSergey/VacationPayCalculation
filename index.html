@@ -36,7 +36,7 @@
           </p>
         </div>
 
-        <div class="step__data vacation">
+        <div class="step__data vacation vacation-period">
           <label class="vacation__label">
             Начало отпуска
             <input class="vacation__input input-data" type="text" placeholder="ДД/ММ/ГГГГ">
@@ -69,18 +69,18 @@
           </div>
         </span>
 
-        <div class="step__data vacation">
+        <div class="step__data vacation billing-period">
           <label class="vacation__label">
             Начало периода
-            <input class="vacation__input input-data" disabled type="text" placeholder="ДД/ММ/ГГГГ">
+            <input class="vacation__input input-data" type="text" placeholder="ДД/ММ/ГГГГ">
           </label>
           <label class="vacation__label">
             Конец периода
-            <input class="vacation__input input-data" disabled type="text" placeholder="ДД/ММ/ГГГГ">
+            <input class="vacation__input input-data" type="text" placeholder="ДД/ММ/ГГГГ">
           </label>
           <label class="vacation__label">
             Количество дней
-            <input class="vacation__input vacation__input--day" disabled type="text" placeholder="дн">
+            <input class="vacation__input vacation__input--day countDaysInputBillingPeriod" disabled type="text" placeholder="дн">
           </label>
         </div>
 
@@ -121,10 +121,11 @@
 
         <div class="except-dates__help except-help">
           <p class="except-help__caption">Количество календарных дней за расчетный период </p>
-          <span class="except-help__example">29,3 * 12 = 351,60</span>
+<!--          <span class="except-help__example"><span class="averageCountDaysSpanBillingPeriod">-</span> * <span class="countMonthSpanBillingPeriod">-</span> = <span class="countDaysSpanBillingPeriod">-</span></span>-->
+          <span class="except-help__example">-</span>
 
-          <p class="except-help__note">29,3 — Среднемесячное количество дней</p>
-          <p class="except-help__note">12 — Количество отработанных месяцев</p>
+          <p class="except-help__note"><span class="averageCountDaysSpanBillingPeriod">-</span> — Среднемесячное количество дней</p>
+          <p class="except-help__note"><span class="countMonthSpanBillingPeriod">-</span> — Количество отработанных месяцев</p>
         </div>
       </li>
 
@@ -449,7 +450,7 @@
 
   <!-- TEMPLATES -->
   <template id="premium-template__last-yaer">
-    <div class="calculate-premium__content premium-data">
+    <div class="calculate-premium__content premium-data premium__last-yaer">
 
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
@@ -478,7 +479,7 @@
   </template>
 
   <template id="premium-template__half-yaer">
-    <div class="calculate-premium__content premium-data premium-data--half-yaer">
+    <div class="calculate-premium__content premium-data premium-data--half-yaer premium__half-yaer">
 
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
@@ -521,7 +522,7 @@
   </template>
 
   <template id="premium-template__montly">
-    <div class="calculate-premium__content premium-data">
+    <div class="calculate-premium__content premium-data premium__montly">
 
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
@@ -570,7 +571,7 @@
   </template>
 
   <template id="premium-template__other-production">
-    <div class="calculate-premium__content premium-data">
+    <div class="calculate-premium__content premium-data premium__other-production">
 
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
@@ -599,7 +600,7 @@
   </template>
 
   <template id="supplement-template__supplement">
-    <div class="calculate-supplement__content supplement-data supplement-data--supplemen">
+    <div class="calculate-supplement__content supplement-data supplement-data--supplemen supplement__supplement">
 
       <div class="supplement-data__wrapper">
         <span class="premium-data__caption">Сумма надбавки или доплаты
@@ -635,7 +636,7 @@
   </template>
 
   <template id="supplement-template__other-payments">
-    <div class="calculate-supplement__content supplement-data supplement-data--supplemen">
+    <div class="calculate-supplement__content supplement-data supplement-data--supplemen supplement__other-payments">
 
       <div class="supplement-data__wrapper">
         <span class="premium-data__caption">Сумма надбавки или доплаты

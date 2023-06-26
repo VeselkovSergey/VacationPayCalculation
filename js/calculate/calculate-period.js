@@ -11,11 +11,12 @@ periodSwitcher.addEventListener("change", function () {
 
   if (this.checked) {
     calculatePeriodContent.style.display = "block"
-    getCountValidDays()
   } else {
     calculatePeriodContent.style.display = "none"
     btnNext.removeAttribute("disabled")
   }
+
+  checkAndSetCountValidDays()
 })
 
 btnExcept.addEventListener("click", function () {
@@ -47,12 +48,12 @@ btnExcept.addEventListener("click", function () {
       minDate: parseDate(startDateInputBillingPeriod.val()),
       maxDate: parseDate(endDateInputBillingPeriod.val()),
       onSelect: function (dateText) {
-        getCountValidDays()
+        checkAndSetCountValidDays()
       },
     })
   })
 
-  getCountValidDays()
+  checkAndSetCountValidDays()
 
 })
 
@@ -64,118 +65,163 @@ exceptDates.addEventListener("click", function (evt) {
     exceptDatesStartCounter--
     exceptDatesEndCounter--
 
-    getCountValidDays()
+    checkAndSetCountValidDays()
   }
 })
 
-function getCountValidDays() {
+function checkAndSetCountValidDays() {
 
-  btnNext.setAttribute('disabled', "true")
+  btnNext.setAttribute("disabled", "true")
 
   let isValid = true
 
+  let expectDays = 0
   let workedDays = 0
-  let countMonth = 0
+  let countMonthInExpectDays = 0
 
-  $(".except-data[data-except-start]").each(function () {
+  let workedDaysInFullPeriod = 0
+  let countMonthInFullPeriod = 0
 
-    const startDateEl = this
-    const endDateEl = this.closest(".except-dates__wrapper").querySelector(".except-data[data-except-end]")
-
-    const startDate = startDateEl.value
-    const endDate = endDateEl.value
-
-    if (!startDate || !endDate) {
-      isValid = false
-    }
-
-    const countDays = datediff(parseDate(startDate), parseDate(endDate))
+  if (startDateInputBillingPeriod.val() && endDateInputBillingPeriod.val()) {
+    const countDays = datediff(parseDate(startDateInputBillingPeriod.val()), parseDate(endDateInputBillingPeriod.val()))
     if (countDays <= 0) {
-      startDateEl.classList.add("not-valid")
-      endDateEl.classList.add("not-valid")
+      startDateInputBillingPeriod.addClass("not-valid")
+      endDateInputBillingPeriod.addClass("not-valid")
       isValid = false
-      return
     } else {
-      startDateEl.classList.remove("not-valid")
-      endDateEl.classList.remove("not-valid")
+      startDateInputBillingPeriod.removeClass("not-valid")
+      endDateInputBillingPeriod.removeClass("not-valid")
+      isValid = true
+
+      const {
+        validDays,
+        countMonth: count,
+      } = getValidDaysInPeriod(startDateInputBillingPeriod.val(), endDateInputBillingPeriod.val())
+      workedDaysInFullPeriod = validDays
+      countMonthInFullPeriod = count
     }
+  } else {
+    isValid = false
+  }
 
-    let query = []
+  if (periodSwitcher.checked) {
+    $(".except-data[data-except-start]").each(function () {
 
-    // проверяем только вышестоящие периоды
-    for (let i = 1; i < Number(this.dataset.exceptStart.match(/\d+/)[0]); i++) {
-      query.push(`.except-data[data-except-start="val_${i}"]`)
-    }
+      const startDateEl = this
+      const endDateEl = this.closest(".except-dates__wrapper").querySelector(".except-data[data-except-end]")
 
-    $(query.join(", ")).each(function () {
+      const startDate = startDateEl.value
+      const endDate = endDateEl.value
 
-      let startDateForCheck = this.value
-      let endDateElForCheck = this.closest(".except-dates__wrapper").querySelector(".except-data[data-except-end]").value
+      if (!startDate || !endDate) {
+        isValid = false
+      }
+
+      const countDays = datediff(parseDate(startDate), parseDate(endDate))
+      if (countDays <= 0) {
+        startDateEl.classList.add("not-valid")
+        endDateEl.classList.add("not-valid")
+        isValid = false
+        return
+      } else {
+        startDateEl.classList.remove("not-valid")
+        endDateEl.classList.remove("not-valid")
+      }
+
+      let query = []
+
+      // проверяем только вышестоящие периоды
+      for (let i = 1; i < Number(this.dataset.exceptStart.match(/\d+/)[0]); i++) {
+        query.push(`.except-data[data-except-start="val_${i}"]`)
+      }
+
+      $(query.join(", ")).each(function () {
+
+        let startDateForCheck = this.value
+        let endDateElForCheck = this.closest(".except-dates__wrapper").querySelector(".except-data[data-except-end]").value // получаем дату конца в первом исключении дат
 
 
-      if (startDate && endDate && startDateForCheck && endDateElForCheck) {
+        if (startDate && endDate && startDateForCheck && endDateElForCheck) {
 
-        const startDateIsNotValid = checkDateBetweenDates(startDateForCheck, endDateElForCheck, startDate)
-        const endDateIsNotValid = checkDateBetweenDates(startDateForCheck, endDateElForCheck, endDate)
+          const startDateIsNotValid = checkDateBetweenDates(startDateForCheck, endDateElForCheck, startDate)
+          const endDateIsNotValid = checkDateBetweenDates(startDateForCheck, endDateElForCheck, endDate)
 
-        if (startDateIsNotValid) {
-          isValid = false
-          startDateEl.classList.add("not-valid")
-        } else {
-          startDateEl.classList.remove("not-valid")
+          if (startDateIsNotValid) {
+            isValid = false
+            startDateEl.classList.add("not-valid")
+          } else {
+            startDateEl.classList.remove("not-valid")
+          }
+
+          if (endDateIsNotValid) {
+            isValid = false
+            endDateEl.classList.add("not-valid")
+          } else {
+            endDateEl.classList.remove("not-valid")
+          }
         }
 
-        if (endDateIsNotValid) {
-          isValid = false
-          endDateEl.classList.add("not-valid")
-        } else {
-          endDateEl.classList.remove("not-valid")
-        }
+      })
+
+      if (startDate && endDate) {
+        const {validDays, countMonth, notValidDays} = getValidDaysInPeriod(startDate, endDate)
+        expectDays += validDays
+        workedDays += notValidDays
+        countMonthInExpectDays += countMonth
       }
 
     })
-
-    if (startDate && endDate) {
-      const {validDays, countMonth: count} = getValidDaysInPeriod(startDate, endDate)
-      workedDays += validDays
-      countMonth += count
-    }
-
-  })
-
-  const total = Number(((12 - countMonth) * 29.3 + Number(workedDays)).toFixed(4))
+  }
 
   if (!isValid) {
     return null
   }
 
+  const totalDays = workedDaysInFullPeriod - (29.3 * countMonthInExpectDays)
+  const totalMonths = countMonthInFullPeriod - countMonthInExpectDays
+  setCountDaysInputBillingPeriod(totalDays, totalMonths, workedDays)
+
   btnNext.removeAttribute("disabled")
-
-  return total
-
 
 }
 
 function getValidDaysInPeriod(startDate, endDate) {
+
+  const yearStartLocal = parseDate(startDate).getFullYear()
+  const yearEndLocal = parseDate(endDate).getFullYear()
+  const diffYear = yearEndLocal - yearStartLocal // 0 и больше
+
   const countDays = datediff(parseDate(startDate), parseDate(endDate))
 
-  let daysInMonth = getCountDaysInMonthByDate(parseDate(startDate))
+  const countMonth = parseDate(endDate).getMonth() + (12 * diffYear) - parseDate(startDate).getMonth() + 1
 
-  const countMonth = parseDate(endDate).getMonth() - parseDate(startDate).getMonth() + 1
+  let daysInMonth = 0
 
-  if (parseDate(startDate).getMonth() !== parseDate(endDate).getMonth()) {
-    daysInMonth = 0
-    for (let i = 1; i <= countMonth; i++) {
-      const days = getCountDaysInMonthByDate(new Date(parseDate(startDate).getFullYear(), parseDate(startDate).getMonth() + i, 0, 0, 0, 0))
-      daysInMonth += days
+  for (let j = 1; j <= countMonth; j++) {
+
+    const yearLocal = yearStartLocal
+    let monthLocal = parseDate(startDate).getMonth() + j
+
+    let coef = 0
+
+    if (monthLocal > 12) {
+      monthLocal -= 12
+      coef += 1
     }
+
+    const calcDate = new Date(yearLocal + coef, monthLocal, 0, 0, 0, 0)
+
+    const days = getCountDaysInMonthByDate(calcDate)
+    daysInMonth += days
   }
 
-  const validDays = Number((29.3 * countMonth / daysInMonth * (daysInMonth - countDays)).toFixed(4))
-  // const total = ((12 - countMonth) * 29.3 + Number(validDays)).toFixed(4)
+  const validDays = parseFloat((29.3 * countMonth / daysInMonth * countDays).toFixed(4))
+  const notValidDays = parseFloat((29.3 * countMonth - validDays).toFixed(4))
+
   return {
     validDays,
     countMonth,
+    notValidDays,
   }
 }
 
