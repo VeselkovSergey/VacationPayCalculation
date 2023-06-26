@@ -3,6 +3,7 @@ let calculateSalaryContainer = document.querySelector(".calculate-salary")
 let salarySwitcher = document.querySelector(".salary-switcher__checkbox")
 let calculateSalaryAddExceptButton = document.querySelector(".calculate-salary__add-except")
 let salaryAmountInputElement = document.querySelector("body > section > ul.calculate__step-list.step > li:nth-child(3) > div.step__item-salary > div.step__data.salary-data > div > label > input")
+const salaryItemsContainer = document.body.querySelector(".calculate-salary__content")
 
 selectSalary.addEventListener("change", function () {
   let itemSalary = document.querySelector(".step__item-salary")
@@ -34,7 +35,7 @@ calculateSalaryAddExceptButton.addEventListener("click", () => {
   <div class="salary-data__wrapper">
     <span class="salary-data__caption">Новый оклад</span>
     <label class="salary-data__label salary-field">
-      <input class="salary-field__input" type="text" placeholder="0,00">
+      <input class="salary-field__input" type="number" placeholder="0,00">
     </label>
   </div>
 
@@ -59,7 +60,6 @@ calculateSalaryAddExceptButton.addEventListener("click", () => {
   salaryItemContainerEl.classList.add("calculate-salary__item")
   salaryItemContainerEl.innerHTML = salaryItemContainer
 
-  const salaryItemsContainer = document.body.querySelector(".calculate-salary__content")
   salaryItemsContainer.append(salaryItemContainerEl)
 
   $(".calculate-salary__item .input-data").datepicker("destroy")
@@ -68,8 +68,8 @@ calculateSalaryAddExceptButton.addEventListener("click", () => {
     changeYear: true,
     minDate: parseDate(startDateInputBillingPeriod.val()),
     maxDate: parseDate(endDateInputBillingPeriod.val()),
-    onSelect: function(dateText) {
-      checkCrossDate(salaryItemsContainer, ".calculate-salary__item .input-data")
+    onSelect: function (dateText) {
+      checkForOpenNextBtn()
     },
   })
 })
@@ -78,6 +78,7 @@ calculateSalaryContainer.addEventListener("click", (evt) => {
   if (evt.target.classList.contains("salary-data__hide-fields")) {
     let exceptWrapper = evt.target.closest(".calculate-salary__item")
     exceptWrapper.remove()
+    checkForOpenNextBtn()
   }
 })
 
@@ -91,41 +92,96 @@ salarySwitcher.addEventListener("change", function () {
     salaryContent.style.display = "none"
   }
 
-  checkForOpenNextBtn()
 })
 
-salaryAmountInputElement.addEventListener("input", function () {
-  checkForOpenNextBtn()
+document.body.addEventListener("input", (evn) => {
+  if (evn.target.closest(".step__item-salary, .step__item-wage")) {
+    checkForOpenNextBtn()
+  }
+})
+
+document.body.addEventListener("click", (evn) => {
+  if (evn.target.closest(".step__item-salary, .step__item-wage")) {
+    checkForOpenNextBtn()
+  }
+})
+
+document.body.addEventListener("change", (evn) => {
+  if (evn.target.closest(".step__item-salary, .step__item-wage")) {
+    checkForOpenNextBtn()
+  }
 })
 
 function checkForOpenNextBtn() {
   btnNext.setAttribute("disabled", "true")
 
+  let isValid = true
+
   if (selectSalary.value === "wage") {
 
-  } else if (selectSalary.value === "salary") {
-    if (salaryAmountInputElement.value) {
-      if (!salarySwitcher.checked) {
-        btnNext.removeAttribute("disabled")
+    if (!wageSwitcher.checked) {
+      document.body.querySelectorAll(".calculate-wage__table input:not([type='checkbox'])").forEach((input) => {
+        if (!input.value) {
+          isValid = false
+        }
+      })
+    } else if (wageSwitcher.checked) {
+      document.body.querySelectorAll(".calculate-wage input:not([type='checkbox'])").forEach((input) => {
+        if (!input.value) {
+          isValid = false
+        }
+      })
+      if (!checkCrossDate(wageData, ".wage-data__change .input-data")) {
+        isValid = false
       }
     }
-  }
-}
 
-function checkCrossDate(container, queryDateInput) {
-  container.querySelectorAll(queryDateInput).forEach((date, key) => {
-    let isValid = true
-    container.querySelectorAll(queryDateInput).forEach((checkDate, key2) => {
-      if (date.value && checkDate.value) {
-        if (key !== key2 && checkDateBetweenDates(date.value, date.value, checkDate.value)) {
+  } else if (selectSalary.value === "salary") {
+
+    if (!salaryAmountInputElement.value && !salarySwitcher.checked) {
+      isValid = false
+    } else {
+      if (salarySwitcher.checked) {
+        document.body.querySelectorAll(".step__item-salary input:not([type='checkbox'])").forEach((input) => {
+          if (!input.value) {
+            isValid = false
+          }
+        })
+        if (!checkCrossDate(salaryItemsContainer, ".calculate-salary__item .input-data")) {
           isValid = false
         }
       }
+    }
+  }
+
+  if (!isValid) {
+    return
+  }
+
+  btnNext.removeAttribute("disabled")
+}
+
+function checkCrossDate(container, queryDateInput) {
+  let isValid = true
+  container.querySelectorAll(queryDateInput).forEach((date, key) => {
+    let isValidLocal = true
+    container.querySelectorAll(queryDateInput).forEach((checkDate, key2) => {
+      if (date.value && date.value.length === 10 && checkDate.value && checkDate.value.length === 10) {
+        if ((key !== key2 && checkDateBetweenDates(date.value, date.value, checkDate.value))) {
+          isValidLocal = false
+          isValid = false
+        }
+
+      } else {
+        isValid = false
+      }
     })
-    if (!isValid) {
+    if (!isValidLocal) {
       date.classList.add("not-valid")
     } else {
       date.classList.remove("not-valid")
     }
   })
+
+  return isValid
 }

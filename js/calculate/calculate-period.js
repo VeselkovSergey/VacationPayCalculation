@@ -181,6 +181,8 @@ function checkAndSetCountValidDays() {
   const totalMonths = countMonthInFullPeriod - countMonthInExpectDays
   setCountDaysInputBillingPeriod(totalDays, totalMonths, workedDays)
 
+  setWagePeriods(startDateInputBillingPeriod.val(), totalMonths)
+
   btnNext.removeAttribute("disabled")
 
 }

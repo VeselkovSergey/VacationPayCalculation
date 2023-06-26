@@ -821,6 +821,9 @@ input[type=radio].visually-hidden {
 .wage-table tr:first-of-type td {
   padding-top: 0;
 }
+.wage-table tr.hide-row {
+  display: none;
+}
 
 .wage-table__data {
   display: flex;

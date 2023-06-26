@@ -18,7 +18,6 @@ wageSwitcher.addEventListener("change", function () {
 btnAddChange.addEventListener("click", function () {
   ChangeDatesStartCounter++
 
-  let wageData = this.closest(".wage-data")
   let wageDataWrapper = document.createElement("div")
   let wageField =
     `<div class="wage-data__wrapper">
@@ -31,7 +30,7 @@ btnAddChange.addEventListener("click", function () {
     <div class="wage-data__wrapper">
       <span class="wage-data__caption">Новый оклад</span>
       <label class="wage-data__label wage-field">
-        <input class="wage-field__input" type="text" placeholder="0,00">
+        <input class="wage-field__input" type="number" placeholder="0,00">
       </label>
     </div>
     <button class="wage-data__hide-fields"></button>`
@@ -47,7 +46,7 @@ btnAddChange.addEventListener("click", function () {
       changeYear: true,
       minDate: parseDate(startDateInputBillingPeriod.val()),
       maxDate: parseDate(endDateInputBillingPeriod.val()),
-      onSelect: function(dateText) {
+      onSelect: function (dateText) {
         checkCrossDate(wageData, ".wage-data__change .input-data")
       },
     })
@@ -67,7 +66,6 @@ wageData.addEventListener("click", function (evt) {
 document.body.querySelectorAll(".wage-table__data-input").forEach((inputEl) => {
   inputEl.addEventListener("input", () => {
     let sum = 0
-    console.log(document.body.querySelectorAll(".wage-table__data-input"))
     document.body.querySelectorAll(".wage-table__data-input").forEach((el) => {
       sum += Number(el.value)
     })
