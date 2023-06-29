@@ -28,6 +28,8 @@ SELECT_PREMIUM.addEventListener("change", function () {
 
     calculatePremium.append(lastYearContent)
 
+    document.body.querySelector('select.select-premium option[value="last-year"]').setAttribute("disabled", "true")
+
   } else if (this.value === "half-year") {
 
     const premiumTemplateHalfYear = document.querySelector("#premium-template__half-yaer")
@@ -52,11 +54,14 @@ SELECT_PREMIUM.addEventListener("change", function () {
   this.value = "default"
 
   $(function () {
-    $(".input-data").datepicker({
+    $(".calculate__bonus-premium .input-data").datepicker({
       changeMonth: true,
       changeYear: true,
-      minDate: new Date("2023-01-01"),
-      yearRange: "2023:2024",
+      minDate: parseDate(startDateInputBillingPeriod.val()),
+      maxDate: parseDate(endDateInputBillingPeriod.val()),
+      onSelect: function (dateText) {
+        checkPremiumInputs()
+      },
     })
   })
 })
@@ -82,11 +87,14 @@ SELECT_SUPPLEMENT.addEventListener("change", function () {
   this.value = "default"
 
   $(function () {
-    $(".input-data").datepicker({
+    $(".calculate__bonus-supplement .input-data").datepicker({
       changeMonth: true,
       changeYear: true,
-      minDate: new Date("2023-01-01"),
-      yearRange: "2023:2024",
+      minDate: parseDate(startDateInputBillingPeriod.val()),
+      maxDate: parseDate(endDateInputBillingPeriod.val()),
+      onSelect: function (dateText) {
+        checkPremiumInputs()
+      },
     })
   })
 })
@@ -96,6 +104,10 @@ document.body.querySelector(".calculate__bonus-premium").addEventListener("click
     let exceptWrapper = evt.target.closest(".calculate-premium__content")
 
     exceptWrapper.remove()
+
+    if (evt.target.closest(".premium__last-yaer")) {
+      document.body.querySelector('select.select-premium option[value="last-year"]').removeAttribute("disabled")
+    }
   }
 })
 
@@ -106,3 +118,16 @@ document.body.querySelector(".calculate__bonus-supplement").addEventListener("cl
     exceptWrapper.remove()
   }
 })
+
+document.body.addEventListener("click", checkPremiumInputs)
+
+document.body.addEventListener("input", checkPremiumInputs)
+
+document.body.addEventListener("change", checkPremiumInputs)
+
+function checkPremiumInputs() {
+  console.log(checkCrossDate(calculatePremium, ".premium__last-yaer .input-data"))
+  console.log(checkCrossDate(calculatePremium, ".premium__half-yaer .input-data"))
+  console.log(checkCrossDate(calculatePremium, ".premium__montly .input-data"))
+  console.log(checkCrossDate(calculatePremium, ".premium__other-production .input-data"))
+}
