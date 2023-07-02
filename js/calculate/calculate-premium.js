@@ -74,10 +74,22 @@ SELECT_PREMIUM.addEventListener("change", function () {
   this.value = "default"
 
   $(function () {
-    $(".calculate__bonus-premium .input-data").datepicker({
+    $(".calculate__bonus-premium .input-data.month-accrual").datepicker({
       changeMonth: true,
       changeYear: true,
       minDate: parseDate(startDateInputBillingPeriod.val()),
+      maxDate: parseDate(endDateInputBillingPeriod.val()),
+      onSelect: function (dateText) {
+        checkPremiumInputs()
+      },
+    })
+  })
+
+  $(function () {
+    $(".calculate__bonus-premium .input-data:not(.month-accrual)").datepicker({
+      changeMonth: true,
+      changeYear: true,
+      minDate: parseDate(`01.01.${startDateInputBillingPeriod.val().split('.')[2]}`),
       maxDate: parseDate(endDateInputBillingPeriod.val()),
       onSelect: function (dateText) {
         checkPremiumInputs()
@@ -110,7 +122,7 @@ SELECT_SUPPLEMENT.addEventListener("change", function () {
     $(".calculate__bonus-supplement .input-data").datepicker({
       changeMonth: true,
       changeYear: true,
-      minDate: parseDate(startDateInputBillingPeriod.val()),
+      minDate: parseDate(`01.01.${startDateInputBillingPeriod.val().split('.')[2]}`),
       maxDate: parseDate(endDateInputBillingPeriod.val()),
       onSelect: function (dateText) {
         checkPremiumInputs()
@@ -159,8 +171,21 @@ document.body.addEventListener("input", checkPremiumInputs)
 document.body.addEventListener("change", checkPremiumInputs)
 
 function checkPremiumInputs() {
-  console.log(checkCrossDate(calculatePremium, ".premium__last-year .input-data"))
-  console.log(checkCrossDate(calculatePremium, ".premium__half-year .input-data"))
-  console.log(checkCrossDate(calculatePremium, ".premium__monthly .input-data"))
-  console.log(checkCrossDate(calculatePremium, ".premium__other-production .input-data"))
+  let isValid = checkCrossDate(calculatePremium, ".premium__last-year .input-data")
+    && checkCrossDate(calculatePremium, ".premium__half-year > .premium-data__wrapper .input-data")
+    && checkCrossDate(calculatePremium, ".premium__quarter-year > .premium-data__wrapper .input-data")
+    && checkCrossDate(calculatePremium, ".premium__monthly .input-data")
+    && checkCrossDate(calculatePremium, ".premium__other-production .input-data")
+
+  document.body.querySelectorAll(".calculate__bonus-premium input:not([type='checkbox'])").forEach((input) => {
+    if (!input.value) {
+      isValid = false
+    }
+  })
+
+  if (isValid) {
+    btnNext.removeAttribute("disabled")
+  } else {
+    btnNext.setAttribute("disabled", "true")
+  }
 }

@@ -155,18 +155,19 @@ function setBillingPeriod(startDate) {
 }
 
 function setCountDaysInputBillingPeriod(days, countMonth, daysInNotFullMonth) {
-  countDaysInputBillingPeriod.val(days)
   countDaysSpanBillingPeriod.html(days)
   countMonthSpanBillingPeriod.each(function () {
     this.innerHTML = countMonth
   })
 
-  const totalDays = parseFloat((Number(days) / Number(countMonth)).toFixed(4))
+  const totalDays = parseFloat((countMonth ? (Number(days) / Number(countMonth)) : 0).toFixed(4))
 
   if (daysInNotFullMonth) {
-
-    calculateExample.html(`${countMonth + Math.floor(daysInNotFullMonth / 29.3)} мес. х 29,3 дн. + ${parseFloat((daysInNotFullMonth - (Math.floor(daysInNotFullMonth / 29.3)) * 29.3).toFixed(4))} дн. = ${parseFloat((days + daysInNotFullMonth).toFixed(4))} дн.`)
+    const daysLocal = parseFloat((days + daysInNotFullMonth).toFixed(4))
+    countDaysInputBillingPeriod.val(daysLocal)
+    calculateExample.html(`${countMonth + Math.floor(daysInNotFullMonth / 29.3)} мес. х 29,3 дн. + ${parseFloat((daysInNotFullMonth - (Math.floor(daysInNotFullMonth / 29.3)) * 29.3).toFixed(4))} дн. = ${daysLocal} дн.`)
   } else {
+    countDaysInputBillingPeriod.val(days)
     calculateExample.html(`${countMonth} мес. х 29,3 дн. = ${days} дн.`)
   }
   averageCountDaysSpanBillingPeriod.each(function () {
