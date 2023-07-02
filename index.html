@@ -380,8 +380,9 @@
         <select class="calculate__bonus-select select-premium">
           <option selected hidden disabled value="default">Выберите период</option>
           <option class="select-premium__option" value="last-year">За прошлый год</option>
-          <option class="select-premium__option" value="half-year">Квартальные или полугодовые</option>
-          <option class="select-premium__option" value="montly">Ежемесячные</option>
+          <option class="select-premium__option" value="half-year">Полугодовые</option>
+          <option class="select-premium__option" value="quarter-year">Квартальные</option>
+          <option class="select-premium__option" value="monthly">Ежемесячные</option>
           <option class="select-premium__option" value="other-production">Прочие производственные</option>
         </select>
 
@@ -449,8 +450,8 @@
 
 
   <!-- TEMPLATES -->
-  <template id="premium-template__last-yaer">
-    <div class="calculate-premium__content premium-data premium__last-yaer">
+  <template id="premium-template__last-year">
+    <div class="calculate-premium__content premium-data premium__last-year">
 
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
@@ -478,8 +479,8 @@
     </div>
   </template>
 
-  <template id="premium-template__half-yaer">
-    <div class="calculate-premium__content premium-data premium-data--half-yaer premium__half-yaer">
+  <template id="premium-template__half-year">
+    <div class="calculate-premium__content premium-data premium-data--half-year premium__half-year">
 
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
@@ -521,8 +522,51 @@
     </div>
   </template>
 
-  <template id="premium-template__montly">
-    <div class="calculate-premium__content premium-data premium__montly">
+  <template id="premium-template__quarter-year">
+    <div class="calculate-premium__content premium-data premium-data--quarter-year premium__quarter-year">
+
+      <div class="premium-data__wrapper">
+        <span class="premium-data__caption">Сумма премии
+          <div class="premium-data__caption-support support">
+            <button class="support__button support__button--attention"></button>
+            <p class="support__answer support__answer--summ">Квартальные и&nbsp;полугодовые премии вводите, если их&nbsp;начислили в&nbsp;расчетном периоде. Например, работник идет в&nbsp;отпуск в&nbsp;апреле 2022&nbsp;года. Расчетный период&nbsp;&mdash; с&nbsp;апреля 2021 года по&nbsp;март 2022 года&nbsp;&mdash; отработан неполностью. В&nbsp;апреле 2021 года работнику начислили премию за&nbsp;I квартал 2021&nbsp;года. Этот период не&nbsp;попал в&nbsp;расчетный. Тем не&nbsp;менее, премия включается в&nbsp;расчет, но&nbsp;пропорционально отработанному времени. Не&nbsp;вводите премии, которые начислили за&nbsp;пределами расчетного периода. Добавим, что при расчете отпускных премии учитывают в&nbsp;полном объеме, если расчетный период отработан полностью. При неполностью отработанном расчетном периоде расчетчик учтет премию пропорционально отработанному времени. Исключение&nbsp;&mdash; ситуации, когда период, за&nbsp;который выплачена премия, полностью попал в&nbsp;расчетный. Тогда премию расчетчик возьмет в&nbsp;полной сумме.
+              <button class="support__answer-close"></button>
+            </p>
+          </div>
+        </span>
+        <label class="premium-data__label premium-field">
+          <input class="premium-field__input" type="text" placeholder="0,00">
+        </label>
+      </div>
+
+      <div class="premium-data__wrapper">
+        <span class="premium-data__caption">Месяц начисления</span>
+        <label class="premium-data__label premium-field premium-field--data">
+          <input class="premium-field__input input-data" type="text" placeholder="ДД.ММ.ГГГГ">
+        </label>
+      </div>
+
+      <div class="premium-data__wrapper-period">
+        <div class="premium-data__wrapper">
+          <span class="premium-data__caption">Начислена за период</span>
+          <label class="premium-data__label premium-field premium-field--data">
+            <input class="premium-field__input input-data" type="text" placeholder="ДД.ММ.ГГГГ">
+          </label>
+        </div>
+        <div class="premium-data__wrapper">
+          <label class="premium-data__label premium-field premium-field--data">
+            <input class="premium-field__input input-data" type="text" placeholder="ДД.ММ.ГГГГ">
+          </label>
+        </div>
+      </div>
+
+      <button class="premium-data__hide-fields"></button>
+
+    </div>
+  </template>
+
+  <template id="premium-template__monthly">
+    <div class="calculate-premium__content premium-data premium__monthly">
 
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
@@ -546,14 +590,14 @@
       </div>
 
       <div class="premium-data__switcher">
-        <label class="premium-data__montly-switcher montly-switcher">
-          <input class="visually-hidden montly-switcher__checkbox" type="checkbox">
-          <span class="montly-switcher__label"></span>
+        <label class="premium-data__monthly-switcher monthly-switcher">
+          <input class="visually-hidden monthly-switcher__checkbox" type="checkbox">
+          <span class="monthly-switcher__label"></span>
           Размер премии – фиксированный процент от оклада
         </label>
         <div class="premium-data__support support">
           <button class="support__button"></button>
-          <p class="support__answer support__answer--montly">При расчете отпускных корректируются на&nbsp;коэффициент
+          <p class="support__answer support__answer--monthly">При расчете отпускных корректируются на&nbsp;коэффициент
             индексации зарплата и&nbsp;те&nbsp;выплаты, которые увеличиваются одновременно с&nbsp;окладом. Если сумма
             премии не&nbsp;изменяется, она не&nbsp;корректируется на&nbsp;коэффициент повышения. Если сумма установлена
             в&nbsp;процентах к&nbsp;окладу, то&nbsp;она корректируется при условии, что процент фиксированный, а&nbsp;не&nbsp;плавающий.

@@ -23,7 +23,7 @@ SELECT_PREMIUM.addEventListener("change", function () {
 
   if (this.value === "last-year") {
 
-    const premiumTemplateLastYear = document.querySelector("#premium-template__last-yaer")
+    const premiumTemplateLastYear = document.querySelector("#premium-template__last-year")
     let lastYearContent = premiumTemplateLastYear.content.cloneNode(true)
 
     calculatePremium.append(lastYearContent)
@@ -32,17 +32,37 @@ SELECT_PREMIUM.addEventListener("change", function () {
 
   } else if (this.value === "half-year") {
 
-    const premiumTemplateHalfYear = document.querySelector("#premium-template__half-yaer")
+    const premiumTemplateHalfYear = document.querySelector("#premium-template__half-year")
     let halfYearContent = premiumTemplateHalfYear.content.cloneNode(true)
 
     calculatePremium.append(halfYearContent)
 
-  } else if (this.value === "montly") {
+    if (calculatePremium.querySelectorAll('.premium__half-year').length === 2) {
+      document.body.querySelector('select.select-premium option[value="half-year"]').setAttribute("disabled", "true")
+    }
 
-    const premiumTemplateMontly = document.querySelector("#premium-template__montly")
-    let montlyContent = premiumTemplateMontly.content.cloneNode(true)
+  } else if (this.value === "quarter-year") {
 
-    calculatePremium.append(montlyContent)
+    const premiumTemplateQuarterYear = document.querySelector("#premium-template__quarter-year")
+    let halfYearContent = premiumTemplateQuarterYear.content.cloneNode(true)
+
+    calculatePremium.append(halfYearContent)
+
+    if (calculatePremium.querySelectorAll('.premium__quarter-year').length === 4) {
+      document.body.querySelector('select.select-premium option[value="quarter-year"]').setAttribute("disabled", "true")
+    }
+
+  } else if (this.value === "monthly") {
+
+    const premiumTemplateMonthly = document.querySelector("#premium-template__monthly")
+    let monthlyContent = premiumTemplateMonthly.content.cloneNode(true)
+
+    calculatePremium.append(monthlyContent)
+
+    if (calculatePremium.querySelectorAll('.premium__monthly').length === 12) {
+      document.body.querySelector('select.select-premium option[value="monthly"]').setAttribute("disabled", "true")
+    }
+
   } else if (this.value === "other-production") {
 
     const premiumTemplateOther = document.querySelector("#premium-template__other-production")
@@ -105,9 +125,22 @@ document.body.querySelector(".calculate__bonus-premium").addEventListener("click
 
     exceptWrapper.remove()
 
-    if (evt.target.closest(".premium__last-yaer")) {
+    if (evt.target.closest(".premium__last-year")) {
       document.body.querySelector('select.select-premium option[value="last-year"]').removeAttribute("disabled")
     }
+
+    if (evt.target.closest(".premium__half-year")) {
+      document.body.querySelector('select.select-premium option[value="half-year"]').removeAttribute("disabled")
+    }
+
+    if (evt.target.closest(".premium__quarter-year")) {
+      document.body.querySelector('select.select-premium option[value="quarter-year"]').removeAttribute("disabled")
+    }
+
+    if (evt.target.closest(".premium__monthly")) {
+      document.body.querySelector('select.select-premium option[value="monthly"]').removeAttribute("disabled")
+    }
+
   }
 })
 
@@ -126,8 +159,8 @@ document.body.addEventListener("input", checkPremiumInputs)
 document.body.addEventListener("change", checkPremiumInputs)
 
 function checkPremiumInputs() {
-  console.log(checkCrossDate(calculatePremium, ".premium__last-yaer .input-data"))
-  console.log(checkCrossDate(calculatePremium, ".premium__half-yaer .input-data"))
-  console.log(checkCrossDate(calculatePremium, ".premium__montly .input-data"))
+  console.log(checkCrossDate(calculatePremium, ".premium__last-year .input-data"))
+  console.log(checkCrossDate(calculatePremium, ".premium__half-year .input-data"))
+  console.log(checkCrossDate(calculatePremium, ".premium__monthly .input-data"))
   console.log(checkCrossDate(calculatePremium, ".premium__other-production .input-data"))
 }
