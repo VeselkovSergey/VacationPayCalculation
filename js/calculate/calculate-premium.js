@@ -28,7 +28,7 @@ SELECT_PREMIUM.addEventListener("change", function () {
 
     calculatePremium.append(lastYearContent)
 
-    document.body.querySelector('select.select-premium option[value="last-year"]').setAttribute("disabled", "true")
+    document.body.querySelector("select.select-premium option[value=\"last-year\"]").setAttribute("disabled", "true")
 
   } else if (this.value === "half-year") {
 
@@ -37,8 +37,8 @@ SELECT_PREMIUM.addEventListener("change", function () {
 
     calculatePremium.append(halfYearContent)
 
-    if (calculatePremium.querySelectorAll('.premium__half-year').length === 2) {
-      document.body.querySelector('select.select-premium option[value="half-year"]').setAttribute("disabled", "true")
+    if (calculatePremium.querySelectorAll(".premium__half-year").length === 2) {
+      document.body.querySelector("select.select-premium option[value=\"half-year\"]").setAttribute("disabled", "true")
     }
 
   } else if (this.value === "quarter-year") {
@@ -48,8 +48,8 @@ SELECT_PREMIUM.addEventListener("change", function () {
 
     calculatePremium.append(halfYearContent)
 
-    if (calculatePremium.querySelectorAll('.premium__quarter-year').length === 4) {
-      document.body.querySelector('select.select-premium option[value="quarter-year"]').setAttribute("disabled", "true")
+    if (calculatePremium.querySelectorAll(".premium__quarter-year").length === 4) {
+      document.body.querySelector("select.select-premium option[value=\"quarter-year\"]").setAttribute("disabled", "true")
     }
 
   } else if (this.value === "monthly") {
@@ -59,8 +59,8 @@ SELECT_PREMIUM.addEventListener("change", function () {
 
     calculatePremium.append(monthlyContent)
 
-    if (calculatePremium.querySelectorAll('.premium__monthly').length === 12) {
-      document.body.querySelector('select.select-premium option[value="monthly"]').setAttribute("disabled", "true")
+    if (calculatePremium.querySelectorAll(".premium__monthly").length === 12) {
+      document.body.querySelector("select.select-premium option[value=\"monthly\"]").setAttribute("disabled", "true")
     }
 
   } else if (this.value === "other-production") {
@@ -89,7 +89,7 @@ SELECT_PREMIUM.addEventListener("change", function () {
     $(".calculate__bonus-premium .input-data:not(.month-accrual)").datepicker({
       changeMonth: true,
       changeYear: true,
-      minDate: parseDate(`01.01.${startDateInputBillingPeriod.val().split('.')[2]}`),
+      minDate: parseDate(`01.01.${startDateInputBillingPeriod.val().split(".")[2]}`),
       maxDate: parseDate(endDateInputBillingPeriod.val()),
       onSelect: function (dateText) {
         checkPremiumInputs()
@@ -122,7 +122,7 @@ SELECT_SUPPLEMENT.addEventListener("change", function () {
     $(".calculate__bonus-supplement .input-data").datepicker({
       changeMonth: true,
       changeYear: true,
-      minDate: parseDate(`01.01.${startDateInputBillingPeriod.val().split('.')[2]}`),
+      minDate: parseDate(`01.01.${startDateInputBillingPeriod.val().split(".")[2]}`),
       maxDate: parseDate(endDateInputBillingPeriod.val()),
       onSelect: function (dateText) {
         checkPremiumInputs()
@@ -138,19 +138,19 @@ document.body.querySelector(".calculate__bonus-premium").addEventListener("click
     exceptWrapper.remove()
 
     if (evt.target.closest(".premium__last-year")) {
-      document.body.querySelector('select.select-premium option[value="last-year"]').removeAttribute("disabled")
+      document.body.querySelector("select.select-premium option[value=\"last-year\"]").removeAttribute("disabled")
     }
 
     if (evt.target.closest(".premium__half-year")) {
-      document.body.querySelector('select.select-premium option[value="half-year"]').removeAttribute("disabled")
+      document.body.querySelector("select.select-premium option[value=\"half-year\"]").removeAttribute("disabled")
     }
 
     if (evt.target.closest(".premium__quarter-year")) {
-      document.body.querySelector('select.select-premium option[value="quarter-year"]').removeAttribute("disabled")
+      document.body.querySelector("select.select-premium option[value=\"quarter-year\"]").removeAttribute("disabled")
     }
 
     if (evt.target.closest(".premium__monthly")) {
-      document.body.querySelector('select.select-premium option[value="monthly"]').removeAttribute("disabled")
+      document.body.querySelector("select.select-premium option[value=\"monthly\"]").removeAttribute("disabled")
     }
 
   }
@@ -171,6 +171,9 @@ document.body.addEventListener("input", checkPremiumInputs)
 document.body.addEventListener("change", checkPremiumInputs)
 
 function checkPremiumInputs() {
+  if (stepCounter !== 3) {
+    return
+  }
   let isValid = checkCrossDate(calculatePremium, ".premium__last-year .input-data")
     && checkCrossDate(calculatePremium, ".premium__half-year > .premium-data__wrapper .input-data")
     && checkCrossDate(calculatePremium, ".premium__quarter-year > .premium-data__wrapper .input-data")

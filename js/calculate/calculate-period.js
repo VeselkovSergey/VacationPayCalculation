@@ -11,9 +11,11 @@ periodSwitcher.addEventListener("change", function () {
 
   if (this.checked) {
     calculatePeriodContent.style.display = "block"
+    calculatePeriodContent.classList.add("has-expected-dates")
   } else {
     calculatePeriodContent.style.display = "none"
     btnNext.removeAttribute("disabled")
+    calculatePeriodContent.classList.remove("has-expected-dates")
   }
 
   checkAndSetCountValidDays()
@@ -177,13 +179,16 @@ function checkAndSetCountValidDays() {
     return null
   }
 
-  const totalDays = workedDaysInFullPeriod - (29.3 * countMonthInExpectDays)
+  // const totalDays = workedDaysInFullPeriod - (29.3 * countMonthInExpectDays)
   const totalMonths = countMonthInFullPeriod - countMonthInExpectDays
-  setCountDaysInputBillingPeriod(totalDays, totalMonths, workedDays)
-
+  // const res = setCountDaysInputBillingPeriod(totalDays, totalMonths, workedDays)
   setWagePeriods(startDateInputBillingPeriod.val(), totalMonths)
 
+  calculate()
+
   btnNext.removeAttribute("disabled")
+
+  return {countMonthInFullPeriod}
 
 }
 
@@ -227,5 +232,53 @@ function getValidDaysInPeriod(startDate, endDate) {
   }
 }
 
+async function getWorkedDaysByDates(startDate, endDate) {
 
+  const startDateDay = startDate.getDate() < 10 ? "0" + startDate.getDate() : startDate.getDate()
+  const endDateDay = endDate.getDate() < 10 ? "0" + endDate.getDate() : endDate.getDate()
 
+  const startGetMonth = startDate.getMonth() + 1
+  const endGetMonth = endDate.getMonth() + 1
+  const startDateMonth = startGetMonth < 10 ? (startGetMonth === 0 ? 12 : "0" + startGetMonth) : startGetMonth
+  const endDateMonth = endGetMonth < 10 ? (endGetMonth === 0 ? 12 : "0" + endGetMonth) : endGetMonth
+
+  const startDateForAPI = `${startDate.getFullYear()}${startDateMonth}${startDateDay}`
+  const endDateForAPI = `${endDate.getFullYear()}${endDateMonth}${endDateDay}`
+
+  return new Promise(async function (resolve, reject) {
+    const response = await fetch(`./getWorkedDaysByDates.php?date1=${startDateForAPI}&date2=${endDateForAPI}`)
+    resolve(await response.json())
+  })
+}
+
+function getCountWorkedDaysByDates(startDate, endDate, workedDays) {
+  const countDays = datediff(startDate, endDate)
+
+  let localStartDate = new Date(startDate)
+
+  let countWorkedDays = 0
+
+  for (let i = 1; i <= countDays; i++) {
+
+    countWorkedDays += workedDays[dateToStr(localStartDate)] ? 1 : 0
+
+    localStartDate = localStartDate.addDays(1)
+  }
+
+  return countWorkedDays
+}
+
+async function checkOnWorkedDay(startDate) {
+
+  const startDateDay = startDate.getDate() < 10 ? "0" + startDate.getDate() : startDate.getDate()
+
+  const startGetMonth = startDate.getMonth() + 1
+  const startDateMonth = startGetMonth < 10 ? (startGetMonth === 0 ? 12 : "0" + startGetMonth) : startGetMonth
+
+  const startDateForAPI = `${startDate.getFullYear()}${startDateMonth}${startDateDay}`
+
+  return new Promise(async function (resolve, reject) {
+    const response = await fetch(`./checkOnWorkedDay.php?date=${startDateForAPI}`)
+    resolve(Number(await response.text()))
+  })
+}

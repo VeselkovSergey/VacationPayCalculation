@@ -9,8 +9,10 @@ wageSwitcher.addEventListener("change", function () {
 
   if (this.checked) {
     wageContent.style.display = "flex"
+    wageContent.classList.add('has-change-salary')
   } else {
     wageContent.style.display = "none"
+    wageContent.classList.remove('has-change-salary')
   }
 })
 
@@ -30,7 +32,7 @@ btnAddChange.addEventListener("click", function () {
     <div class="wage-data__wrapper">
       <span class="wage-data__caption">Новый оклад</span>
       <label class="wage-data__label wage-field">
-        <input class="wage-field__input" type="number" placeholder="0,00">
+        <input class="wage-field__input salary-data" type="number" placeholder="0,00">
       </label>
     </div>
     <button class="wage-data__hide-fields"></button>`
@@ -47,7 +49,7 @@ btnAddChange.addEventListener("click", function () {
       minDate: parseDate(startDateInputBillingPeriod.val()),
       maxDate: parseDate(endDateInputBillingPeriod.val()),
       onSelect: function (dateText) {
-        checkCrossDate(wageData, ".wage-data__change .input-data")
+        checkForOpenNextBtn()
       },
     })
   })

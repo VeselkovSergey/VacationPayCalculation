@@ -1,6 +1,6 @@
 let holidays = [
-  "10.06.2023",
-  "20.06.2023",
+  "10.07.2023",
+  "20.07.2023",
 ]
 
 let stepCounter = 0
@@ -39,6 +39,13 @@ const countMonthSpanBillingPeriod = $(".countMonthSpanBillingPeriod")
 const averageCountDaysSpanBillingPeriod = $(".averageCountDaysSpanBillingPeriod")
 const calculateExample = $(".except-help__example")
 
+const resultCalculate__example = $(".result-calculate__example")
+const resultCalculate__salary = $(".result-calculate__salary")
+const resultCalculate__day = $(".result-calculate__day")
+const resultCalculate__averageIncome = $(".result-calculate__average-income")
+const resultCalculate__vacation = $(".result-calculate__vacation")
+const tableResultBody = $(".calculate__result-table.table-result tbody")
+
 const salaryDateTextElement = $("body > section > ul.calculate__step-list.step > li:nth-child(3) > div.step__item-salary > div.step__data.salary-data > div > span > span")
 
 // button support
@@ -51,6 +58,14 @@ function datediff(first, second) {
 function parseDate(str) {
   let mdy = str.split(".")
   return new Date(mdy[2], mdy[1] - 1, mdy[0])
+}
+
+function dateToStr(date) {
+  let day = date.getDate()
+  day = day < 10 ? "0" + day : day
+  let month = date.getMonth() + 1
+  month = month < 10 ? "0" + month : month
+  return `${day}.${month}.${date.getFullYear()}`
 }
 
 function checkDateBetweenDates(startDate, endDate, checkDate) {
@@ -110,9 +125,22 @@ Date.prototype.addDays = function (d) {
   return new Date(this.valueOf() + 864E5 * d)
 }
 
-function getLastDayOnMonthByDate(date) {
+Date.prototype.removeDays = function (d) {
+  return new Date(this.valueOf() - 864E5 * d)
+}
+
+
+// Date.prototype.addDays = function(days) {
+//   var date = new Date(this.valueOf());
+//   date.setDate(date.getDate() + days);
+//   return date;
+// }
+// var date = new Date();
+// console.log(date.addDays(5));
+
+function getLastDayOnMonthByDate(date, endOfDay = false) {
   const t = date
-  return new Date(t.getFullYear(), t.getMonth() + 1, 0, 23, 59, 59)
+  return new Date(t.getFullYear(), t.getMonth() + 1, 0, endOfDay ? 23 : 0, endOfDay ? 59 : 0, endOfDay ? 59 : 0)
 }
 
 function getCountDaysInMonthByDate(date) {
@@ -121,17 +149,17 @@ function getCountDaysInMonthByDate(date) {
 
 function getFirstDayOnMonthByDate(date) {
   const t = date
-  return new Date(t.getFullYear(), t.getMonth() + 1, 1, 0, 0, 0)
+  return new Date(t.getFullYear(), t.getMonth(), 1, 0, 0, 0)
 }
 
 function setAfterChangeVacationPeriod(startDate, endDate) {
   setBillingPeriod(startDate)
-  setWagePeriods(startDate, 12)
+  setWagePeriods(startDateInputBillingPeriod.val(), 12)
 }
 
 function setBillingPeriod(startDate) {
   const startDateObject = dateConvertToObject(startDate)
-  const startDateBillingPeriod = getFirstDayOnMonthByDate(parseDate(`1.${startDateObject.month - 1}.${startDateObject.year - 1}`))
+  const startDateBillingPeriod = getFirstDayOnMonthByDate(parseDate(`1.${startDateObject.month}.${startDateObject.year - 1}`))
   const endDateBillingPeriod = getLastDayOnMonthByDate(parseDate(`${startDateObject.day}.${startDateObject.month - 1}.${startDateObject.year}`))
 
   $(".billing-period .vacation__input").datepicker("option", {
@@ -147,7 +175,8 @@ function setBillingPeriod(startDate) {
 
   startDateInputBillingPeriod.datepicker("setDate", startDateBillingPeriod)
   endDateInputBillingPeriod.datepicker("setDate", endDateBillingPeriod)
-  setCountDaysInputBillingPeriod(351.6, 12, null)
+  calculate()
+  // setCountDaysInputBillingPeriod(351.6, 12, null)
   countDaysInputBillingPeriod.attr("disabled", true)
   salaryDateTextElement.html(`${monthsByIndex[startDateObject.month - 1]} ${startDateObject.year - (startDateObject.month - 1 === 11 ? 2 : 1)}`)
 
@@ -162,10 +191,16 @@ function setCountDaysInputBillingPeriod(days, countMonth, daysInNotFullMonth) {
 
   const totalDays = parseFloat((countMonth ? (Number(days) / Number(countMonth)) : 0).toFixed(4))
 
+  let daysLocal = 0
+  let monthLocal = 0
+  let daysLocal2 = 0
+
   if (daysInNotFullMonth) {
-    const daysLocal = parseFloat((days + daysInNotFullMonth).toFixed(4))
+    daysLocal = parseFloat((days + daysInNotFullMonth).toFixed(4))
+    monthLocal = countMonth + Math.floor(daysInNotFullMonth / 29.3)
+    daysLocal2 = daysInNotFullMonth - (Math.floor(daysInNotFullMonth / 29.3)) * 29.3
     countDaysInputBillingPeriod.val(daysLocal)
-    calculateExample.html(`${countMonth + Math.floor(daysInNotFullMonth / 29.3)} мес. х 29,3 дн. + ${parseFloat((daysInNotFullMonth - (Math.floor(daysInNotFullMonth / 29.3)) * 29.3).toFixed(4))} дн. = ${daysLocal} дн.`)
+    calculateExample.html(`${monthLocal} мес. х 29,3 дн. + ${parseFloat((daysLocal2).toFixed(4))} дн. = ${daysLocal} дн.`)
   } else {
     countDaysInputBillingPeriod.val(days)
     calculateExample.html(`${countMonth} мес. х 29,3 дн. = ${days} дн.`)
@@ -173,6 +208,16 @@ function setCountDaysInputBillingPeriod(days, countMonth, daysInNotFullMonth) {
   averageCountDaysSpanBillingPeriod.each(function () {
     this.innerHTML = totalDays
   })
+
+  return {
+    days,
+    countMonth,
+    daysInNotFullMonth,
+    totalDays,
+    daysLocal,
+    monthLocal,
+    daysLocal2,
+  }
 }
 
 function setIntervalForRelationToBillingPeriod() {
@@ -190,27 +235,39 @@ function setIntervalForRelationToBillingPeriod() {
     changeMonth: true,
     changeYear: true,
     minDate: parseDate(startDateInputBillingPeriod.val()),
-    maxDate: parseDate(endDateInputBillingPeriod.val()),
+    maxDate: parseDate(endDateInputVacation.val()),
+    onSelect: function (dateText) {
+      checkForOpenNextBtn()
+    },
   })
 }
 
-function setWagePeriods(startDate, totalMonth) {
-  const startDateObject = dateConvertToObject(startDate)
-  document.querySelectorAll(".calculate-wage__table .period-title").forEach((period, key) => {
-    let index = startDateObject.month - 1 + key
-    let year = startDateObject.year - 1
-    if (index > 11) {
-      index = index - 12
-      year++
-    }
-    period.innerHTML = `${monthsByIndex[index]} ${year}`
+function setWagePeriods(startDateString, totalMonth) {
 
-    if (key + 1 > totalMonth) {
-      period.closest('tr').classList.add('hide-row')
-    } else {
-      period.closest('tr').classList.remove('hide-row')
-    }
+  const startDate = parseDate(startDateString)
+
+  document.querySelectorAll(".calculate-wage__table tr:not(:last-child)").forEach((periodContainer, key) => {
+    periodContainer.classList.add("hide-row")
+    periodContainer.querySelector(".wage-table__data-input").dataset.notUse = "true"
   })
+
+  let localDate = new Date(startDate.getTime())
+  for (let i = 0; i < totalMonth; i++) {
+    let currentLocalDate = new Date(localDate.getTime())
+    localDate = new Date(localDate.setMonth(localDate.getMonth() + 1))
+    let localMonth = localDate.getMonth()
+    localMonth = localMonth < 10 ? (localMonth === 0 ? 12 : "0" + localMonth) : localMonth
+    let localYear = currentLocalDate.getFullYear()
+
+    const periodContainer = document.querySelector(`.calculate-wage__table tr:nth-child(${i + 1})`)
+    periodContainer.querySelector(".period-title").innerHTML = `${monthsByIndex[Number(localMonth) - 1]} ${localYear}`
+    periodContainer.classList.remove("hide-row")
+
+    const inputSalary = periodContainer.querySelector(".wage-table__data-input")
+    inputSalary.dataset.date = `${localMonth}.${localYear}`
+    inputSalary.dataset.notUse = "false"
+
+  }
 }
 
 function setPropsOnVacationPeriod(startDateInputVacation, endDateInputVacation, countDaysInputVacation, countDaysValue = null) {
@@ -277,6 +334,434 @@ function setPropsOnVacationPeriod(startDateInputVacation, endDateInputVacation, 
   btnNext.setAttribute("disabled", "true")
 }
 
+function splitPeriodOnMonth(startDate, endDate) {
+
+  const countDays = datediff(startDate, endDate)
+
+  const monthWithDays = {}
+
+  let localStartDate = startDate
+
+  for (let i = 1; i <= countDays; i++) {
+
+    const dateStr = dateToStr(getFirstDayOnMonthByDate(localStartDate))
+    if (!monthWithDays[dateStr]) {
+      monthWithDays[dateStr] = {startPeriodOnMonth: dateToStr(localStartDate)}
+    }
+
+    monthWithDays[dateStr].endPeriodOnMonth = dateToStr(localStartDate)
+
+    localStartDate = localStartDate.addDays(1)
+  }
+
+  return monthWithDays
+}
+
+async function calculate() {
+  // const countDaysBillingPeriod = countDaysInputBillingPeriod.val()
+
+  // let salaryAmount = salaryAmountInputElement.val()
+
+  // let {
+  //   totalDays,
+  //   daysLocal,
+  //   days,
+  //   daysInNotFullMonth,
+  //   countMonth,
+  //   daysLocal2,
+  //   monthLocal,
+  //   countMonthInFullPeriod,
+  // } = checkAndSetCountValidDays()
+
+  const {
+    validDays,
+    countMonth: countMonthInFullPeriod,
+  } = getValidDaysInPeriod(startDateInputBillingPeriod.val(), endDateInputBillingPeriod.val())
+
+  // начало расчетного периода
+  const startDateBillingPeriod = parseDate(startDateInputBillingPeriod.val())
+  const endDateBillingPeriod = parseDate(endDateInputBillingPeriod.val())
+  //startDateInputBillingPeriod.val()
+
+  // заработок за расчетный период
+  // let salaryInBullingPeriod = 0
+
+  // количество календарных дней расчетного периода
+  // let countDaysBullingPeriod = 0
+
+  // количество дней отпуска
+  let countVacationsDays = countDaysInputVacation.val()
+
+  tableResultBody.html("")
+
+
+  // if (true || selectSalary.value === "salary"/* && !salarySwitcher.checked*/) {
+  if (calculatePremium.children.length === 0 && calculateSupplement.children.length === 0) {
+
+    const excludedWorkedDays = {}
+    const excludedPeriods = {}
+    const countExcludedDays = {}
+
+    // получаем рабочие дни с бэка
+    let workedDaysFromBackEnd = await getWorkedDaysByDates(getFirstDayOnMonthByDate(parseDate(startDateInputBillingPeriod.val())), getLastDayOnMonthByDate(parseDate(endDateInputBillingPeriod.val())))
+
+    // бежим по исключениям (если включена галка (has-expected-dates))
+    document.body.querySelectorAll(".calculate-period.has-expected-dates .except-dates__wrapper").forEach((exceptDates) => {
+      const startExpectDateEl = exceptDates.querySelector(".except-data[data-except-start]")
+      const endExpectDateEl = exceptDates.querySelector(".except-data[data-except-end]")
+
+      const startExpectDate = parseDate(startExpectDateEl.value)
+      const endExpectDate = parseDate(endExpectDateEl.value)
+
+      const excludedDatesByMonth = splitPeriodOnMonth(startExpectDate, endExpectDate)
+
+      Object.keys(excludedDatesByMonth).forEach((firstNumberInMonth) => {
+
+
+        if (!excludedWorkedDays[firstNumberInMonth]) {
+          excludedWorkedDays[firstNumberInMonth] = 0
+        }
+
+        if (!countExcludedDays[firstNumberInMonth]) {
+          countExcludedDays[firstNumberInMonth] = 0
+        }
+
+        if (!excludedPeriods[firstNumberInMonth]) {
+          excludedPeriods[firstNumberInMonth] = []
+        }
+
+        const startPeriodOnMonth = excludedDatesByMonth[firstNumberInMonth].startPeriodOnMonth
+        const endPeriodOnMonth = excludedDatesByMonth[firstNumberInMonth].endPeriodOnMonth
+        const workedDays = getCountWorkedDaysByDates(parseDate(startPeriodOnMonth), parseDate(endPeriodOnMonth), workedDaysFromBackEnd)
+
+        excludedWorkedDays[firstNumberInMonth] += workedDays
+
+        countExcludedDays[firstNumberInMonth] += datediff(parseDate(startPeriodOnMonth), parseDate(endPeriodOnMonth))
+
+        excludedPeriods[firstNumberInMonth].push({
+          startPeriod: startPeriodOnMonth,
+          endPeriod: endPeriodOnMonth,
+        })
+      })
+    })
+
+    // заработок за расчетный период
+    // salaryInBullingPeriod = salaryAmount * countMonth + (salaryAmount / 22 * daysLocal2)
+
+    // количество календарных дней расчетного периода
+    // countDaysBullingPeriod = daysLocal || days
+
+    // const startDateBillingPeriod = new Date("05.02.2022")
+
+    let totalCalendarDaysInBullingPeriod = 0
+    let countFullMonth = 0
+
+    const textDetail = []
+
+    const workedDaysInMonths = {}
+    const workedDaysInMonthsByPeriods = {}
+    const countDaysInMonth = {}
+    const countDaysInMonthByPeriods = {}
+
+    const monthForIteration = new Date(startDateBillingPeriod.getTime())
+
+    // бежим по всем месяцам расчетного периода
+    for (let i = 0; i < countMonthInFullPeriod; i++) {
+
+      const humanNextMonth = monthForIteration.getMonth() + 1 // следующий месяц
+
+      const nextDate = new Date(monthForIteration.setMonth(humanNextMonth))
+
+      const startDateInPeriod = i === 0 ? startDateBillingPeriod : new Date(`${humanNextMonth}.01.${humanNextMonth === 12 ? nextDate.getFullYear() - 1 : nextDate.getFullYear()}`)  // возможно не чало месяца (05.02.2022) - ставим на 1 число месяца
+
+      const startDateYear = startDateInPeriod.getFullYear()
+
+      const startDateInMonth = new Date(`${humanNextMonth}.01.${startDateYear}`)
+
+      const endDateInMonth = getLastDayOnMonthByDate(startDateInMonth)
+
+      // итерируемый месяц может быть последним в расчетном периоде, поэтому возьмем дату конца расчетного периода
+      const endDateInPeriod = countMonthInFullPeriod !== (i + 1) ? endDateInMonth : endDateBillingPeriod
+
+      //получаем количетсво рабочих дней в месяце
+      //получаем количество рабочих дней в периоде с начала до конца (период мог начаться с 10 числа месяца)
+      const countWorkedDaysInPeriod = getCountWorkedDaysByDates(startDateInPeriod, endDateInPeriod, workedDaysFromBackEnd)
+      const countWorkedDaysInMonth = getCountWorkedDaysByDates(startDateInMonth, endDateInMonth, workedDaysFromBackEnd)
+
+      if (!workedDaysInMonths[dateToStr(startDateInMonth)]) {
+        workedDaysInMonths[dateToStr(startDateInMonth)] = 0
+      }
+
+      workedDaysInMonthsByPeriods[dateToStr(startDateInMonth)] = countWorkedDaysInPeriod - (excludedWorkedDays[dateToStr(startDateInMonth)] || 0)
+      workedDaysInMonths[dateToStr(startDateInMonth)] = countWorkedDaysInMonth
+
+      countDaysInMonth[dateToStr(startDateInMonth)] = datediff(startDateInMonth, endDateInMonth)
+      countDaysInMonthByPeriods[dateToStr(startDateInMonth)] = datediff(startDateInPeriod, endDateInPeriod)
+
+      if (
+        datediff(startDateInMonth, endDateInMonth) === datediff(startDateInPeriod, endDateInPeriod)
+        && !countExcludedDays[dateToStr(startDateInMonth)]
+      ) {
+        totalCalendarDaysInBullingPeriod += 29.3
+        countFullMonth++
+      } else /*if (datediff(startDateInMonth, endDateInMonth) !== (countExcludedDays[dateToStr(startDateInMonth)] || 0))*/ {
+        totalCalendarDaysInBullingPeriod += 29.3 / datediff(startDateInMonth, endDateInMonth) * (datediff(startDateInPeriod, endDateInPeriod) - (countExcludedDays[dateToStr(startDateInMonth)] || 0))
+        textDetail.push(`( 29.3 дн. / ${datediff(startDateInMonth, endDateInMonth)} дн. x ( ${datediff(startDateInPeriod, endDateInPeriod)} дн.` + (countExcludedDays[dateToStr(startDateInMonth)] ? ` - ${countExcludedDays[dateToStr(startDateInMonth)]} дн. )` : " )") + " )")
+      }
+
+      // // console.log(
+      // //   dateToStr(startDateInMonth),
+      // //   countWorkedDaysInMonth,
+      // //   countWorkedDaysInPeriod,
+      // //   excludedWorkedDays[dateToStr(startDateInMonth)],
+      // //   "---",
+      // //   datediff(startDateInMonth, endDateInMonth),
+      // //   datediff(startDateInPeriod, endDateInPeriod),
+      // //   countExcludedDays[dateToStr(startDateInMonth)],
+      // // )
+      //
+      // // const {
+      // //   validDays,
+      // //   countMonth: count,
+      // // } = getValidDaysInPeriod(startDateInputBillingPeriod.val(), endDateInputBillingPeriod.val())
+      //
+      // // console.log("countWorkedDaysInPeriod, countWorkedDaysInMonth", countWorkedDaysInPeriod, countWorkedDaysInMonth, startDateInPeriod.toLocaleDateString())
+      //
+      // // пошел цикл по всем датам исключениям (ищем пересекающиеся, и погнали вычетать)
+      // // const costOnOneDay = salary / countWorkedDaysInMonth - за один день
+      // // const reallyWorkedDay = countWorkedDaysInPeriod минус колличество исключаемыx дней
+      // // const total = costOnOneDay * reallyWorkedDay
+      //
+      // // console.log(/*humanNextMonth, nextDate, */startDateInPeriod, endDateInPeriod, /*startDateYear, */startDateInMonth, endDateInMonth, /*countMonthInFullPeriod*/)
+      //
+      //
+      // /*
+      //
+      // const localDate = new Date(startDateBillingPeriod.setMonth(startDateBillingPeriod.getMonth() + 1))
+      //
+      // let localMonth = localDate.getMonth()
+      // localMonth = localMonth < 10 ? (localMonth === 0 ? 12 : "0" + localMonth) : localMonth
+      //
+      // const tableTr = document.createElement("tr")
+      // tableTr.innerHTML = `
+      // <td>${localMonth}.${localDate.getFullYear()}</td>
+      // <td>${rubFormatter.format(salaryAmount)}</td>
+      // <td>-</td>
+      // <td>${rubFormatter.format(0.00)}</td>
+      // <td>${rubFormatter.format(0.00)}</td>
+      // <td>${rubFormatter.format(0.00)}</td>
+      // <td>${rubFormatter.format(salaryAmount)}</td>
+      // `
+      // tableResultBody.append(tableTr)
+      //
+      //  */
+    }
+
+    totalCalendarDaysInBullingPeriod = Number(totalCalendarDaysInBullingPeriod.toFixed(4))
+
+    // бежим по каждому дню расчетного периода
+    const countDays = datediff(startDateBillingPeriod, endDateBillingPeriod)
+
+    let localStartDate = endDateBillingPeriod
+
+    let salary = Number(salaryAmountInputElement.val())
+
+    if (selectSalary.value === "salary" && document.body.querySelector(".calculate-salary.has-change-salary .calculate-salary__item:last-child .salary-field__input.salary-data")?.value) {
+      salary = Number(document.body.querySelector(".calculate-salary.has-change-salary .calculate-salary__item:last-child .salary-field__input.salary-data")?.value)
+    } else if (selectSalary.value === "wage" && wageSwitcher.checked) {
+      salary = Number(document.body.querySelector(`.calculate-wage__content.has-change-salary .wage-data__change:last-child .wage-field__input.salary-data`)?.value)
+    }
+
+    let lastIndexingSalary = 0
+    let isIndexing = false
+
+    const salaryEveryDay = {}
+    const salaryPerMonths = {}
+
+    let totalSalary = 0
+
+    for (let i = countDays; i >= 1; i--) {
+
+      const dateStr = dateToStr(localStartDate)
+
+      let newSalaryEl = null
+      let newSalary = 0
+
+      // оклад
+      if (selectSalary.value === "salary") {
+        newSalaryEl = document.body.querySelector(`.calculate-salary.has-change-salary .salary-field__input.salary-data[data-date="${dateStr}"]`)
+        newSalary = newSalaryEl ? Number(newSalaryEl.value) : 0
+
+        if (!isIndexing && newSalaryEl?.closest(".calculate-salary__item").querySelector(".index-switcher__checkbox").checked) {
+          isIndexing = true
+          lastIndexingSalary = newSalary
+        }
+
+        // сдельная
+      } else if (selectSalary.value === "wage") {
+        const salaryEl = document.body.querySelector(`.calculate-wage tr:not(.hide-row) .wage-table__data-input[data-date="${(localStartDate.getMonth() + 1) < 10 ? "0" + (localStartDate.getMonth() + 1) : localStartDate.getMonth() + 1}.${localStartDate.getFullYear()}"]`)
+        salary = salaryEl ? Number(salaryEl.value) : 0
+
+        newSalaryEl = document.body.querySelector(`.calculate-wage__content.has-change-salary .wage-field__input.salary-data[data-date="${dateStr}"]`)
+        newSalary = newSalaryEl ? Number(newSalaryEl.value) : 0
+
+        if (!isIndexing && wageSwitcher.checked && newSalary) {
+          isIndexing = true
+          lastIndexingSalary = newSalary
+        }
+      }
+
+      let coefficientIndexing = isIndexing && lastIndexingSalary !== salary ? lastIndexingSalary / salary : "-"
+
+      const monthlySalaryAfterIndexing = lastIndexingSalary !== salary ? lastIndexingSalary : 0
+
+      let isNotCalculate = !!excludedPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))] && !!excludedPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))].find((period) => {
+        return checkDateBetweenDates(period.startPeriod, period.endPeriod, dateStr)
+      })
+
+      salaryEveryDay[dateStr] = {
+
+        baseMonthlySalary: salary,
+
+        monthlySalaryAfterIndexing: monthlySalaryAfterIndexing,
+
+        coefficientIndexing: coefficientIndexing,
+
+        monthlySalaryForWorkedDays: salary / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] * workedDaysInMonthsByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+        monthlySalaryForWorkedDaysAfterIndexing: monthlySalaryAfterIndexing / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] * workedDaysInMonthsByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+
+        salaryPerDayByWorkedDays: salary / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+        salaryPerDayAfterIndexingByWorkedDays: monthlySalaryAfterIndexing / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+
+        countDaysInMonth: countDaysInMonth[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+        countDaysInMonthByPeriod: countDaysInMonthByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+
+        salaryPerDay: salary / countDaysInMonth[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+        salaryPerDayAfterIndexing: monthlySalaryAfterIndexing / countDaysInMonth[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+
+        workedDaysInMonth: workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+        workedDaysInMonthByPeriod: workedDaysInMonthsByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+
+        isCalculate: !isNotCalculate,
+        isWorkedDay: !!getCountWorkedDaysByDates(localStartDate, localStartDate, workedDaysFromBackEnd),
+      }
+
+      salaryPerMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] = {
+        baseMonthlySalary: salary,
+        monthlySalaryAfterIndexing: monthlySalaryAfterIndexing,
+        coefficientIndexing: coefficientIndexing,
+      }
+
+      totalSalary += salaryEveryDay[dateStr].isCalculate && salaryEveryDay[dateStr].isWorkedDay ? (salaryEveryDay[dateStr].salaryPerDayAfterIndexingByWorkedDays || salaryEveryDay[dateStr].salaryPerDayByWorkedDays) : 0
+
+      if (selectSalary.value === "salary" && newSalaryEl) {
+        const prevSalary = newSalaryEl.closest(".calculate-salary__item").previousElementSibling?.querySelector(".salary-field__input.salary-data").value
+        salary = prevSalary ? Number(prevSalary) : Number(salaryAmountInputElement.val())
+      }
+
+      localStartDate = localStartDate.removeDays(1)
+    }
+
+    calculateExample.html(`${countFullMonth} мес. x 29.3 дн.` + (textDetail.length ? (" + " + textDetail.join(" + ")) : "") + ` = ${totalCalendarDaysInBullingPeriod} дн.`)
+    countMonthSpanBillingPeriod.html(countFullMonth)
+    countDaysInputBillingPeriod.val(totalCalendarDaysInBullingPeriod)
+    averageCountDaysSpanBillingPeriod.each(function () {
+      this.innerHTML = (totalCalendarDaysInBullingPeriod / countFullMonth).toFixed(4)
+    })
+
+    const vacationPay = totalSalary / totalCalendarDaysInBullingPeriod * countVacationsDays
+
+    resultCalculate__example.html(`${rubFormatter.format(totalSalary)} / ${totalCalendarDaysInBullingPeriod} дн. x ${countVacationsDays} дн. = ${rubFormatter.format(vacationPay)}`)
+    resultCalculate__salary.html(`${rubFormatter.format(totalSalary)} — заработок за расчетный период`)
+    resultCalculate__day.html(`${totalCalendarDaysInBullingPeriod} дн. — количество календарных дней расчетного периода`)
+    resultCalculate__averageIncome.html(`${rubFormatter.format(totalSalary)} / ${totalCalendarDaysInBullingPeriod} дн. — средний дневной заработок ( ${rubFormatter.format(totalSalary / totalCalendarDaysInBullingPeriod)} )`)
+    resultCalculate__vacation.html(`${countVacationsDays} дн. — количество дней отпуска`)
+
+    Object.keys(salaryPerMonths).forEach((key) => {
+
+      const amount = salaryPerMonths[key].monthlySalaryAfterIndexing || salaryPerMonths[key].baseMonthlySalary
+      const coefficientIndexing = salaryPerMonths?.[key]?.coefficientIndexing !== '-' ? Number(salaryPerMonths?.[key]?.coefficientIndexing)?.toFixed(4) : '-'
+
+      const tableTr = document.createElement("tr")
+      tableTr.innerHTML = `
+             <td>${key}</td>
+             <td>${rubFormatter.format(amount)}</td>
+             <td>${coefficientIndexing}</td>
+             <td>${rubFormatter.format(0.00)}</td>
+             <td>${rubFormatter.format(0.00)}</td>
+             <td>${rubFormatter.format(0.00)}</td>
+             <td>${rubFormatter.format(amount)}</td>
+             `
+      tableResultBody.append(tableTr)
+
+    })
+
+    // const startDateVacationValue = parseDate(startDateInputVacation.val())
+    // startDateVacationValue.setMonth(startDateVacationValue.getMonth() - 12)
+
+    // const {
+    //   validDays: validDaysInFullBullingPeriod,
+    //   countMonth: countMonthInFullBullingPeriod,
+    // } = getValidDaysInPeriod(startDateInputBillingPeriod.val(), endDateInputBillingPeriod.val())
+
+    // let countWorkedDays = getCountWorkedDaysByDates(parseDate(startDateInputBillingPeriod.val()), parseDate(endDateInputBillingPeriod.val()), workedDaysFromBackEnd)
+
+    // console.log("totalSalary", totalSalary)
+    // console.log("countWorkedDays", countWorkedDays)
+    // console.log("validDaysInFullBullingPeriod", validDaysInFullBullingPeriod)
+    // console.log("countMonthInFullBullingPeriod", countMonthInFullBullingPeriod)
+
+  }
+  // } else if (selectSalary.value === "wage" && !wageSwitcher.checked) {
+  //
+  //   document.querySelectorAll(".calculate-wage__table tr:not(.hide-row) .wage-table__data-input[data-not-use='false']").forEach((period, key) => {
+  //
+  //     const localDate = period.dataset.date
+  //     const localAmount = period.value
+  //
+  //     // заработок за расчетный период
+  //     salaryInBullingPeriod += Number(localAmount)
+  //
+  //     // количество календарных дней расчетного периода
+  //     countDaysBullingPeriod = daysLocal || days
+  //
+  //     const tableTr = document.createElement("tr")
+  //     tableTr.innerHTML = `
+  //       <td>${localDate}</td>
+  //       <td>${rubFormatter.format(localAmount)}</td>
+  //       <td>-</td>
+  //       <td>${rubFormatter.format(0.00)}</td>
+  //       <td>${rubFormatter.format(0.00)}</td>
+  //       <td>${rubFormatter.format(0.00)}</td>
+  //       <td>${rubFormatter.format(localAmount)}</td>
+  //       `
+  //     tableResultBody.append(tableTr)
+  //   })
+  // }
+  //
+  // //средний дневной заработок (0.00 руб.)
+  // let averageDaySalary = salaryInBullingPeriod / countDaysBullingPeriod
+  //
+  // // расчет
+  // let total = parseFloat((salaryInBullingPeriod / countDaysBullingPeriod * countVacationsDays).toFixed(4))
+  //
+  // resultCalculate__example.html(`${rubFormatter.format(salaryInBullingPeriod)} / ${countDaysBullingPeriod} дн. x ${countVacationsDays} дн. = ${rubFormatter.format(total)}`)
+  // resultCalculate__salary.html(`${rubFormatter.format(salaryInBullingPeriod)} — заработок за расчетный период`)
+  // resultCalculate__day.html(`${countDaysBullingPeriod} дн. — количество календарных дней расчетного периода`)
+  // resultCalculate__averageIncome.html(`${rubFormatter.format(salaryInBullingPeriod)} / ${countDaysBullingPeriod} дн. — средний дневной заработок (${rubFormatter.format(averageDaySalary)})`)
+  // resultCalculate__vacation.html(`${countVacationsDays} дн. — количество дней отпуска`)
+  //
+  // // console.log({
+  // //   totalDays,
+  // //   daysLocal,
+  // //   days,
+  // //   daysInNotFullMonth,
+  // //   countMonth,
+  // //   daysLocal2,
+  // //   monthLocal,
+  // // }, countVacationsDays, countDaysBillingPeriod, salaryAmount, total, salaryInBullingPeriod, countDaysBullingPeriod, averageDaySalary)
+}
+
 const rubFormatter = new Intl.NumberFormat("ru-RU", {
   style: "currency",
   currency: "RUB",
@@ -320,7 +805,7 @@ btnNext.addEventListener("click", function () {
     this.classList.remove("step-buttons__next--arrow")
     this.textContent = "Рассчитать отпускные"
   } else if (stepCounter === stepItem.length - 1) {
-    document.querySelector(".step-buttons").style.display = "none"
+    // document.querySelector(".step-buttons").style.display = "none"
   }
 
   stepItem[stepCounter].style.display = "block"
@@ -334,12 +819,12 @@ btnNext.addEventListener("click", function () {
 
   if ([2].includes(stepCounter)) {
     if (stepCounter === 2) {
-      if (salaryAmountInputElement.value && selectSalary.value === "salary") {
-        btnNext.removeAttribute("disabled")
-      } else {
-        btnNext.setAttribute("disabled", "true")
-      }
+      checkForOpenNextBtn()
     }
+  }
+
+  if (stepCounter === 4) {
+    calculate()
   }
 
 })

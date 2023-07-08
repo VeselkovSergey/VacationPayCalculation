@@ -173,7 +173,7 @@
                 <div class="salary-data__wrapper">
                   <span class="salary-data__caption">Новый оклад</span>
                   <label class="salary-data__label salary-field">
-                    <input class="salary-field__input" type="number" placeholder="0,00">
+                    <input class="salary-field__input salary-data" type="number" placeholder="0,00">
                   </label>
                 </div>
 
@@ -246,7 +246,7 @@
                 <div class="wage-data__wrapper">
                   <span class="wage-data__caption">Новый оклад</span>
                   <label class="wage-data__label wage-field">
-                    <input class="wage-field__input" type="number" placeholder="0,00">
+                    <input class="wage-field__input salary-data" type="number" placeholder="0,00">
                   </label>
                 </div>
               </div>
@@ -412,15 +412,15 @@
 
         <div class="calculate__result result-calculate">
           <span class="result-calculate__caption">Расчет</span>
-          <span class="result-calculate__example">1 043 181,82 руб. / 337,42 дн. × 14 дн. = 43 282,96 руб.</span>
-          <span class="result-calculate__salary">1043181,82 руб. — заработок за расчетный период</span>
-          <span class="result-calculate__day">337,42 дн. — количество календарных дней расчетного периода</span>
-          <span class="result-calculate__average-income">1 043 181,82 руб. / 337,42 дн. — средний дневной заработок (3091,64 руб.)</span>
-          <span class="result-calculate__vacation">14 дн. — количество дней отпуска</span>
+          <span class="result-calculate__example">-</span>
+          <span class="result-calculate__salary">- — заработок за расчетный период</span>
+          <span class="result-calculate__day">- — количество календарных дней расчетного периода</span>
+          <span class="result-calculate__average-income">- — средний дневной заработок (-)</span>
+          <span class="result-calculate__vacation">- — количество дней отпуска</span>
         </div>
 
         <table class="calculate__result-table table-result">
-          <tbody>
+          <thead>
           <tr>
             <th>Месяц</th>
             <th>Зарплата</th>
@@ -430,6 +430,9 @@
             <th>Прочие выплаты</th>
             <th>ИТОГО</th>
           </tr>
+          </thead>
+          <tbody>
+
           </tbody>
         </table>
 
@@ -454,7 +457,7 @@
     <div class="calculate-premium__content premium-data premium__last-year">
 
       <div class="premium-data__wrapper">
-        <span class="premium-data__caption">Сумма премии 
+        <span class="premium-data__caption">Сумма премии
           <div class="premium-data__caption-support support">
             <button class="support__button support__button--attention"></button>
             <p class="support__answer support__answer--summ">Вводите только премию, выплаченную за&nbsp;предшествующий календарный год. Например, если работник идет в&nbsp;отпуск в&nbsp;2022&nbsp;году, можно учесть только годовую премию за&nbsp;2021&nbsp;год. При этом годовые премии вводите независимо от&nbsp;того, начислены они в&nbsp;расчетном периоде или нет. Добавим, что при расчете отпускных годовая премия учитывается в&nbsp;полном объеме, если расчетный период отработан полностью. При неполностью отработанном расчетном периоде расчетчик учтет премию пропорционально отработанному времени. Исключение&nbsp;&mdash; ситуация, когда расчетный период совпадает с&nbsp;календарным годом. Тогда премию расчетчик учтет полностью.

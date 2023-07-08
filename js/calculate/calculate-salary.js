@@ -2,7 +2,7 @@ let selectSalary = document.querySelector(".select-salary")
 let calculateSalaryContainer = document.querySelector(".calculate-salary")
 let salarySwitcher = document.querySelector(".salary-switcher__checkbox")
 let calculateSalaryAddExceptButton = document.querySelector(".calculate-salary__add-except")
-let salaryAmountInputElement = document.querySelector("body > section > ul.calculate__step-list.step > li:nth-child(3) > div.step__item-salary > div.step__data.salary-data > div > label > input")
+let salaryAmountInputElement = $(".salary-field__input[type='number']")
 const salaryItemsContainer = document.body.querySelector(".calculate-salary__content")
 
 selectSalary.addEventListener("change", function () {
@@ -35,7 +35,7 @@ calculateSalaryAddExceptButton.addEventListener("click", () => {
   <div class="salary-data__wrapper">
     <span class="salary-data__caption">Новый оклад</span>
     <label class="salary-data__label salary-field">
-      <input class="salary-field__input" type="number" placeholder="0,00">
+      <input class="salary-field__input salary-data" type="number" placeholder="0,00">
     </label>
   </div>
 
@@ -67,7 +67,7 @@ calculateSalaryAddExceptButton.addEventListener("click", () => {
     changeMonth: true,
     changeYear: true,
     minDate: parseDate(startDateInputBillingPeriod.val()),
-    maxDate: parseDate(endDateInputBillingPeriod.val()),
+    maxDate: parseDate(endDateInputVacation.val()),
     onSelect: function (dateText) {
       checkForOpenNextBtn()
     },
@@ -88,8 +88,10 @@ salarySwitcher.addEventListener("change", function () {
 
   if (this.checked) {
     salaryContent.style.display = "block"
+    salaryContent.classList.add('has-change-salary')
   } else {
     salaryContent.style.display = "none"
+    salaryContent.classList.remove('has-change-salary')
   }
 
 })
@@ -121,7 +123,7 @@ function checkForOpenNextBtn() {
 
     if (!wageSwitcher.checked) {
       document.body.querySelectorAll(".calculate-wage__table input:not([type='checkbox'])").forEach((input) => {
-        if (!input.value) {
+        if (!input.value && input.dataset.notUse !== 'true') {
           isValid = false
         }
       })
@@ -129,6 +131,12 @@ function checkForOpenNextBtn() {
       document.body.querySelectorAll(".calculate-wage input:not([type='checkbox'])").forEach((input) => {
         if (!input.value) {
           isValid = false
+        } else {
+          const dateInput = input.closest('.wage-data__change')?.querySelector('.wage-field__input.input-data')
+          const salaryInput = input.closest('.wage-data__change')?.querySelector('.wage-field__input.salary-data')
+          if (dateInput && salaryInput) {
+            salaryInput.dataset.date = dateInput.value
+          }
         }
       })
       if (!checkCrossDate(wageData, ".wage-data__change .input-data")) {
@@ -138,13 +146,19 @@ function checkForOpenNextBtn() {
 
   } else if (selectSalary.value === "salary") {
 
-    if (!salaryAmountInputElement.value && !salarySwitcher.checked) {
+    if (!salaryAmountInputElement.val() && !salarySwitcher.checked) {
       isValid = false
     } else {
       if (salarySwitcher.checked) {
         document.body.querySelectorAll(".step__item-salary input:not([type='checkbox'])").forEach((input) => {
           if (!input.value) {
             isValid = false
+          } else {
+            const dateInput = input.closest('.calculate-salary__item')?.querySelector('.salary-field__input.input-data')
+            const salaryInput = input.closest('.calculate-salary__item')?.querySelector('.salary-field__input.salary-data')
+            if (dateInput && salaryInput) {
+              salaryInput.dataset.date = dateInput.value
+            }
           }
         })
         if (!checkCrossDate(salaryItemsContainer, ".calculate-salary__item .input-data")) {
