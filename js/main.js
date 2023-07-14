@@ -374,7 +374,7 @@ async function calculate() {
 
 
   // if (true || selectSalary.value === "salary"/* && !salarySwitcher.checked*/) {
-  if (calculatePremium.children.length === 0 && calculateSupplement.children.length === 0) {
+  // if (true || calculatePremium.children.length === 0 && calculateSupplement.children.length === 0) {
 
     const excludedWorkedDays = {}
     const excludedPeriods = {}
@@ -426,6 +426,9 @@ async function calculate() {
     let totalCalendarDaysInBullingPeriod = 0
     let countFullMonth = 0
 
+    let totalWorkedDaysInBullingPeriod = 0
+    let totalWorkedDaysInBullingPeriodWithExcludedDays = 0
+
     const textDetail = []
 
     const workedDaysInMonths = {}
@@ -462,8 +465,13 @@ async function calculate() {
         workedDaysInMonths[dateToStr(startDateInMonth)] = 0
       }
 
-      workedDaysInMonthsByPeriods[dateToStr(startDateInMonth)] = countWorkedDaysInPeriod - (excludedWorkedDays[dateToStr(startDateInMonth)] || 0)
+      const countWithoutExcludedDays = countWorkedDaysInPeriod - (excludedWorkedDays[dateToStr(startDateInMonth)] || 0)
+
+      workedDaysInMonthsByPeriods[dateToStr(startDateInMonth)] = countWithoutExcludedDays
       workedDaysInMonths[dateToStr(startDateInMonth)] = countWorkedDaysInMonth
+
+      totalWorkedDaysInBullingPeriodWithExcludedDays += countWithoutExcludedDays
+      totalWorkedDaysInBullingPeriod += countWorkedDaysInMonth
 
       countDaysInMonth[dateToStr(startDateInMonth)] = datediff(startDateInMonth, endDateInMonth)
       countDaysInMonthByPeriods[dateToStr(startDateInMonth)] = datediff(startDateInPeriod, endDateInPeriod)
@@ -500,8 +508,85 @@ async function calculate() {
 
     const salaryEveryDay = {}
     const salaryPerMonths = {}
+    const premiums = []
 
     let totalSalary = 0
+
+    let premiumYearEl = document.body.querySelector('.calculate-premium .premium__last-year .premium-field__input')
+    let premiumYearDateEl = premiumYearEl?.closest(".premium__last-year").querySelector('.premium-field__input.input-data.month-accrual')
+    let premiumYear = premiumYearEl?.value ? Number(premiumYearEl?.value) : 0
+    const yearPremiumWithExcludedDays = premiumYear / totalWorkedDaysInBullingPeriod * totalWorkedDaysInBullingPeriodWithExcludedDays
+    if (premiumYearDateEl) {
+      premiums.push({
+        date: premiumYearDateEl.value,
+        value: yearPremiumWithExcludedDays,
+        type: 'Годовая премия',
+      })
+    }
+
+    let premiumHalfYear = 0
+    document.body.querySelectorAll('.calculate-premium .premium__half-year .premium-field__input.premium-sum').forEach((premiumHalfYearEl) => {
+      const startPeriodEl = premiumHalfYearEl.closest('.premium__half-year').querySelector(".premium-data__wrapper-period .start-period")
+      const endPeriodEl = premiumHalfYearEl.closest('.premium__half-year').querySelector(".premium-data__wrapper-period .end-period")
+      const premiumDateEl = premiumHalfYearEl.closest('.premium__half-year').querySelector(".premium-field__input.input-data.month-accrual")
+
+      const startDate = parseDate(startPeriodEl.value)
+      const endDate = parseDate(endPeriodEl.value)
+
+      const datesByMonth = splitPeriodOnMonth(startDate, endDate)
+
+      let reCalculate = false
+      Object.keys(datesByMonth).forEach((firstNumberInMonth) => {
+        if (excludedPeriods.hasOwnProperty(firstNumberInMonth)) {
+          reCalculate = true
+        }
+      })
+
+      if (reCalculate) {
+        premiumHalfYear += Number(premiumHalfYearEl.value) / totalWorkedDaysInBullingPeriod * totalWorkedDaysInBullingPeriodWithExcludedDays
+      } else {
+        premiumHalfYear += Number(premiumHalfYearEl.value)
+      }
+
+      premiums.push({
+        date: premiumDateEl.value,
+        value: premiumHalfYear,
+        type: 'Полугодовая премия',
+      })
+
+    })
+
+    let premiumQuarterYear = 0
+    document.body.querySelectorAll('.calculate-premium .premium__quarter-year .premium-field__input.premium-sum').forEach((premiumQuarterYearEl) => {
+      const startPeriodEl = premiumQuarterYearEl.closest('.premium__quarter-year').querySelector(".premium-data__wrapper-period .start-period")
+      const endPeriodEl = premiumQuarterYearEl.closest('.premium__quarter-year').querySelector(".premium-data__wrapper-period .end-period")
+      const premiumDateEl = premiumQuarterYearEl.closest('.premium__quarter-year').querySelector(".premium-field__input.input-data.month-accrual")
+
+      const startDate = parseDate(startPeriodEl.value)
+      const endDate = parseDate(endPeriodEl.value)
+
+      const datesByMonth = splitPeriodOnMonth(startDate, endDate)
+
+      let reCalculate = false
+      Object.keys(datesByMonth).forEach((firstNumberInMonth) => {
+        if (excludedPeriods.hasOwnProperty(firstNumberInMonth)) {
+          reCalculate = true
+        }
+      })
+
+      if (reCalculate) {
+        premiumQuarterYear += Number(premiumQuarterYearEl.value) / totalWorkedDaysInBullingPeriod * totalWorkedDaysInBullingPeriodWithExcludedDays
+      } else {
+        premiumQuarterYear += Number(premiumQuarterYearEl.value)
+      }
+
+      premiums.push({
+        date: premiumDateEl.value,
+        value: premiumQuarterYear,
+        type: 'Квартальная премия',
+      })
+
+    })
 
     for (let i = countDays; i >= 1; i--) {
 
@@ -592,13 +677,39 @@ async function calculate() {
       this.innerHTML = (totalCalendarDaysInBullingPeriod / countFullMonth).toFixed(4)
     })
 
-    const vacationPay = totalSalary / totalCalendarDaysInBullingPeriod * countVacationsDays
+    let totalSalaryWithPremium = totalSalary + yearPremiumWithExcludedDays + premiumHalfYear + premiumQuarterYear
 
-    resultCalculate__example.html(`${rubFormatter.format(totalSalary)} / ${totalCalendarDaysInBullingPeriod} дн. x ${countVacationsDays} дн. = ${rubFormatter.format(vacationPay)}`)
-    resultCalculate__salary.html(`${rubFormatter.format(totalSalary)} — заработок за расчетный период`)
+    const vacationPay = totalSalaryWithPremium / totalCalendarDaysInBullingPeriod * countVacationsDays
+
+    let textTotalSalaryWithPremium = [
+      rubFormatter.format(totalSalary),
+    ]
+
+    yearPremiumWithExcludedDays && textTotalSalaryWithPremium.push(rubFormatter.format(yearPremiumWithExcludedDays))
+    premiumHalfYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumHalfYear))
+    premiumQuarterYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumQuarterYear))
+
+    textTotalSalaryWithPremium = textTotalSalaryWithPremium.join(" + ")
+
+    resultCalculate__example.html(`( ${textTotalSalaryWithPremium} ) / ${totalCalendarDaysInBullingPeriod} дн. x ${countVacationsDays} дн. = ${rubFormatter.format(vacationPay)}`)
+    resultCalculate__salary.html(`${rubFormatter.format(totalSalaryWithPremium)} — заработок за расчетный период`)
     resultCalculate__day.html(`${totalCalendarDaysInBullingPeriod} дн. — количество календарных дней расчетного периода`)
-    resultCalculate__averageIncome.html(`${rubFormatter.format(totalSalary)} / ${totalCalendarDaysInBullingPeriod} дн. — средний дневной заработок ( ${rubFormatter.format(totalSalary / totalCalendarDaysInBullingPeriod)} )`)
+    resultCalculate__averageIncome.html(`${rubFormatter.format(totalSalaryWithPremium)} / ${totalCalendarDaysInBullingPeriod} дн. — средний дневной заработок ( ${rubFormatter.format(totalSalaryWithPremium / totalCalendarDaysInBullingPeriod)} )`)
     resultCalculate__vacation.html(`${countVacationsDays} дн. — количество дней отпуска`)
+
+    premiums.map((premium) => {
+      const tableTr = document.createElement("tr")
+      tableTr.innerHTML = `
+             <td>${premium.date}</td>
+             <td>${premium.type}</td>
+             <td>-</td>
+             <td>${rubFormatter.format(premium.value)}</td>
+             <td>${rubFormatter.format(0.00)}</td>
+             <td>${rubFormatter.format(0.00)}</td>
+             <td>${rubFormatter.format(premium.value)}</td>
+             `
+      tableResultBody.append(tableTr)
+    })
 
     Object.keys(salaryPerMonths).forEach((key) => {
 
