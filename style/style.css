@@ -514,12 +514,10 @@ input[type=radio].visually-hidden {
   top: 34px;
 }
 
-.premium-data--half-year .premium-data__hide-fields, .premium-data--quarter-year .premium-data__hide-fields, .supplement-data--quarter-year .premium-data__hide-fields {
+.premium-data--half-year .premium-data__hide-fields, .premium-data--quarter-year .premium-data__hide-fields,
+.supplement-data--half-year .premium-data__hide-fields,
+.supplement-data--quarter-year .premium-data__hide-fields {
   left: 665px;
-}
-
-.supplement-data .premium-data__hide-fields {
-  /*left: 580px;*/
 }
 
 .salary-data__hide-fields {
@@ -831,8 +829,6 @@ input[type=radio].visually-hidden {
   padding: 13px 0;
   font-size: 16px;
   border-bottom: 1px solid #D6D6D6;
-  color: black;
-  /*padding: 0 10px;*/
 }
 .wage-table__data--result {
   padding-top: 25px;
@@ -1165,7 +1161,6 @@ input[type=radio].visually-hidden {
   line-height: 22px;
   border-bottom: 1px solid #D6D6D6;
   color: black;
-  padding: 0 10px;
 }
 
 .calculate__btns-result {
