@@ -491,6 +491,7 @@ async function calculate() {
   totalCalendarDaysInBullingPeriod = Number(totalCalendarDaysInBullingPeriod.toFixed(4))
 
   // годовая, полгодовые и квартальные премии
+  const premiums = []
   let premiumYearEl = document.body.querySelector(".calculate-premium .premium__last-year .premium-field__input")
   let premiumYearDateEl = premiumYearEl?.closest(".premium__last-year").querySelector(".premium-field__input.input-data.month-accrual")
   let premiumYear = premiumYearEl?.value ? Number(premiumYearEl?.value) : 0
@@ -588,7 +589,6 @@ async function calculate() {
 
   const salaryEveryDay = {}
   const salaryPerMonths = {}
-  const premiums = []
 
   let totalSalary = 0
 
