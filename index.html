@@ -581,7 +581,7 @@
           </div>
         </span>
         <label class="premium-data__label premium-field">
-          <input class="premium-field__input" type="text" placeholder="0,00">
+          <input class="premium-field__input premium-sum" type="text" placeholder="0,00">
         </label>
       </div>
 
@@ -647,10 +647,10 @@
   </template>
 
   <template id="supplement-template__supplement">
-    <div class="calculate-supplement__content supplement-data supplement-data--supplemen supplement__supplement">
+    <div class="calculate-supplement__content supplement-data supplement-data--quarter-year supplement__supplement">
 
       <div class="supplement-data__wrapper">
-        <span class="premium-data__caption">Сумма надбавки или доплаты
+        <span class="premium-data__caption">Сумма
           <div class="premium-data__caption-support support">
             <button class="support__button support__button--attention"></button>
             <p class="support__answer support__answer--summ">Вводите все надбавки и&nbsp;доплаты, которые начислили в&nbsp;расчетном периоде.
@@ -660,6 +660,13 @@
         </span>
         <label class="premium-data__label premium-field">
           <input class="premium-field__input" type="text" placeholder="0,00">
+        </label>
+      </div>
+
+      <div class="premium-data__wrapper">
+        <span class="premium-data__caption">Месяц начисления</span>
+        <label class="premium-data__label premium-field premium-field--data">
+          <input class="premium-field__input input-data month-accrual" type="text" placeholder="ДД.ММ.ГГГГ">
         </label>
       </div>
 
@@ -686,7 +693,7 @@
     <div class="calculate-supplement__content supplement-data supplement-data--supplemen supplement__other-payments">
 
       <div class="supplement-data__wrapper">
-        <span class="premium-data__caption">Сумма надбавки или доплаты
+        <span class="premium-data__caption">Сумма
           <div class="premium-data__caption-support support">
             <button class="support__button support__button--attention"></button>
             <p class="support__answer support__answer--summ">Вводите все надбавки и&nbsp;доплаты, которые начислили в&nbsp;расчетном периоде.
@@ -699,18 +706,11 @@
         </label>
       </div>
 
-      <div class="supplement-data__wrapper-period">
-        <div class="premium-data__wrapper">
-          <span class="premium-data__caption">Начислена за период</span>
-          <label class="premium-data__label premium-field premium-field--data">
-            <input class="premium-field__input input-data" type="text" placeholder="ДД.ММ.ГГГГ">
-          </label>
-        </div>
-        <div class="premium-data__wrapper">
-          <label class="premium-data__label premium-field premium-field--data">
-            <input class="premium-field__input input-data" type="text" placeholder="ДД.ММ.ГГГГ">
-          </label>
-        </div>
+      <div class="premium-data__wrapper">
+        <span class="premium-data__caption">Месяц начисления</span>
+        <label class="premium-data__label premium-field premium-field--data">
+          <input class="premium-field__input input-data month-accrual" type="text" placeholder="ДД.ММ.ГГГГ">
+        </label>
       </div>
 
       <div class="supplement-data__switcher">

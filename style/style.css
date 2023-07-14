@@ -514,12 +514,12 @@ input[type=radio].visually-hidden {
   top: 34px;
 }
 
-.premium-data--half-year .premium-data__hide-fields, .premium-data--quarter-year .premium-data__hide-fields {
+.premium-data--half-year .premium-data__hide-fields, .premium-data--quarter-year .premium-data__hide-fields, .supplement-data--quarter-year .premium-data__hide-fields {
   left: 665px;
 }
 
 .supplement-data .premium-data__hide-fields {
-  left: 580px;
+  /*left: 580px;*/
 }
 
 .salary-data__hide-fields {
@@ -912,7 +912,7 @@ input[type=radio].visually-hidden {
 }
 
 .supplement-data--supplemen {
-  grid-template-columns: 230px 318px;
+  grid-template-columns: 148px 318px;
 }
 
 .bonus-type {
