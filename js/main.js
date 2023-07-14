@@ -576,16 +576,19 @@ async function calculate() {
 
   let localStartDate = endDateBillingPeriod
 
-  let salary = Number(salaryAmountInputElement.val())
+  let monthlySalary = Number(salaryAmountInputElement.val())
 
   if (selectSalary.value === "salary" && document.body.querySelector(".calculate-salary.has-change-salary .calculate-salary__item:last-child .salary-field__input.salary-data")?.value) {
-    salary = Number(document.body.querySelector(".calculate-salary.has-change-salary .calculate-salary__item:last-child .salary-field__input.salary-data")?.value)
+    monthlySalary = Number(document.body.querySelector(".calculate-salary.has-change-salary .calculate-salary__item:last-child .salary-field__input.salary-data")?.value)
   } else if (selectSalary.value === "wage" && wageSwitcher.checked) {
-    salary = Number(document.body.querySelector(`.calculate-wage__content.has-change-salary .wage-data__change:last-child .wage-field__input.salary-data`)?.value)
+    monthlySalary = Number(document.body.querySelector(`.calculate-wage__content.has-change-salary .wage-data__change:last-child .wage-field__input.salary-data`)?.value)
   }
 
   let lastIndexingSalary = 0
   let isIndexing = false
+
+  let lastIndexingMonthlyPremium = 0
+  let isIndexingMonthlyPremium = false
 
   const salaryEveryDay = {}
   const salaryPerMonths = {}
@@ -612,7 +615,7 @@ async function calculate() {
       // сдельная
     } else if (selectSalary.value === "wage") {
       const salaryEl = document.body.querySelector(`.calculate-wage tr:not(.hide-row) .wage-table__data-input[data-date="${(localStartDate.getMonth() + 1) < 10 ? "0" + (localStartDate.getMonth() + 1) : localStartDate.getMonth() + 1}.${localStartDate.getFullYear()}"]`)
-      salary = salaryEl ? Number(salaryEl.value) : 0
+      monthlySalary = salaryEl ? Number(salaryEl.value) : 0
 
       newSalaryEl = document.body.querySelector(`.calculate-wage__content.has-change-salary .wage-field__input.salary-data[data-date="${dateStr}"]`)
       newSalary = newSalaryEl ? Number(newSalaryEl.value) : 0
@@ -622,10 +625,33 @@ async function calculate() {
         lastIndexingSalary = newSalary
       }
     }
+    
+    //       let coefficientIndexing = isIndexing && lastIndexingSalary !== salary ? lastIndexingSalary / monthlySalary : "-"
 
-      let coefficientIndexing = isIndexing && lastIndexingSalary !== salary ? lastIndexingSalary / salary : "-"
+    const monthlyPremiumDateEl = document.body.querySelector(`.calculate__bonus-premium .calculate-premium .premium__monthly .month-accrual[data-first-date-month="${dateToStr(getFirstDayOnMonthByDate(localStartDate))}"]`)
 
-    const monthlySalaryAfterIndexing = lastIndexingSalary !== salary ? lastIndexingSalary : 0
+    const monthlyPremiumEl = monthlyPremiumDateEl?.closest(".premium__monthly").querySelector(".premium-field__input.premium-sum")
+    const monthlyPremium = monthlyPremiumEl ? Number(monthlyPremiumEl?.value) : 0
+
+    const monthlyPremiumIsIndexingEl = monthlyPremiumDateEl?.closest(".premium__monthly").querySelector(".monthly-switcher__checkbox")
+
+    if (!isIndexingMonthlyPremium && monthlyPremiumIsIndexingEl?.checked) {
+      isIndexingMonthlyPremium = true
+      lastIndexingMonthlyPremium = monthlyPremium
+    }
+
+    let coefficientIndexing = "-"
+    if (isIndexing && lastIndexingSalary !== monthlySalary) {
+      coefficientIndexing = lastIndexingSalary / monthlySalary
+      if (isIndexingMonthlyPremium && monthlyPremium) {
+        coefficientIndexing = (lastIndexingSalary + lastIndexingMonthlyPremium) / (monthlySalary + monthlyPremium)
+      }
+    }
+
+    console.log("coefficientIndexing", coefficientIndexing)
+
+    const monthlySalaryAfterIndexing = lastIndexingSalary !== monthlySalary ? lastIndexingSalary : 0
+    const monthlyPremiumAfterIndexing = lastIndexingSalary !== monthlySalary && monthlyPremium ? lastIndexingMonthlyPremium : 0
 
     let isNotCalculate = !!excludedPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))] && !!excludedPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))].find((period) => {
       return checkDateBetweenDates(period.startPeriod, period.endPeriod, dateStr)
@@ -633,22 +659,27 @@ async function calculate() {
 
     salaryEveryDay[dateStr] = {
 
-      baseMonthlySalary: salary,
-
+      monthlySalary: monthlySalary,
       monthlySalaryAfterIndexing: monthlySalaryAfterIndexing,
+
+      monthlyPremium: monthlyPremium,
+      monthlyPremiumAfterIndexing: monthlyPremiumAfterIndexing,
 
       coefficientIndexing: coefficientIndexing,
 
-      monthlySalaryForWorkedDays: salary / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] * workedDaysInMonthsByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+      monthlySalaryForWorkedDays: monthlySalary / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] * workedDaysInMonthsByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
       monthlySalaryForWorkedDaysAfterIndexing: monthlySalaryAfterIndexing / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] * workedDaysInMonthsByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
 
-      salaryPerDayByWorkedDays: salary / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+      salaryPerDayByWorkedDays: monthlySalary / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
       salaryPerDayAfterIndexingByWorkedDays: monthlySalaryAfterIndexing / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+
+      premiumPerDayByWorkedDays: monthlyPremium / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+      premiumPerDayAfterIndexingByWorkedDays: monthlyPremiumAfterIndexing / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
 
       countDaysInMonth: countDaysInMonth[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
       countDaysInMonthByPeriod: countDaysInMonthByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
 
-      salaryPerDay: salary / countDaysInMonth[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+      salaryPerDay: monthlySalary / countDaysInMonth[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
       salaryPerDayAfterIndexing: monthlySalaryAfterIndexing / countDaysInMonth[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
 
       workedDaysInMonth: workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
@@ -659,16 +690,24 @@ async function calculate() {
     }
 
     salaryPerMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] = {
-      baseMonthlySalary: salary,
+      
+      monthlySalary: monthlySalary,
       monthlySalaryAfterIndexing: monthlySalaryAfterIndexing,
+      
+      monthlyPremium: monthlyPremium,
+      monthlyPremiumAfterIndexing: monthlyPremiumAfterIndexing,
+      
       coefficientIndexing: coefficientIndexing,
     }
 
-    totalSalary += salaryEveryDay[dateStr].isCalculate && salaryEveryDay[dateStr].isWorkedDay ? (salaryEveryDay[dateStr].salaryPerDayAfterIndexingByWorkedDays || salaryEveryDay[dateStr].salaryPerDayByWorkedDays) : 0
+    if (salaryEveryDay[dateStr].isCalculate && salaryEveryDay[dateStr].isWorkedDay) {
+      totalSalary += (salaryEveryDay[dateStr].salaryPerDayAfterIndexingByWorkedDays || salaryEveryDay[dateStr].salaryPerDayByWorkedDays)
+      totalSalary += (salaryEveryDay[dateStr].premiumPerDayAfterIndexingByWorkedDays || salaryEveryDay[dateStr].premiumPerDayByWorkedDays)
+    }
 
     if (selectSalary.value === "salary" && newSalaryEl) {
       const prevSalary = newSalaryEl.closest(".calculate-salary__item").previousElementSibling?.querySelector(".salary-field__input.salary-data").value
-      salary = prevSalary ? Number(prevSalary) : Number(salaryAmountInputElement.val())
+      monthlySalary = prevSalary ? Number(prevSalary) : Number(salaryAmountInputElement.val())
     }
 
     localStartDate = localStartDate.removeDays(1)
@@ -717,18 +756,19 @@ async function calculate() {
 
   Object.keys(salaryPerMonths).forEach((key) => {
 
-    const amount = salaryPerMonths[key].monthlySalaryAfterIndexing || salaryPerMonths[key].baseMonthlySalary
+    const salary = salaryPerMonths[key].monthlySalaryAfterIndexing || salaryPerMonths[key].monthlySalary
+    const premium = salaryPerMonths[key].monthlyPremiumAfterIndexing || salaryPerMonths[key].monthlyPremium
     const coefficientIndexing = salaryPerMonths?.[key]?.coefficientIndexing !== "-" ? Number(salaryPerMonths?.[key]?.coefficientIndexing)?.toFixed(4) : "-"
 
     const tableTr = document.createElement("tr")
     tableTr.innerHTML = `
              <td>${key}</td>
-             <td>${rubFormatter.format(amount)}</td>
+             <td>${rubFormatter.format(salary)}</td>
              <td>${coefficientIndexing}</td>
+             <td>${rubFormatter.format(premium)}</td>
              <td>${rubFormatter.format(0.00)}</td>
              <td>${rubFormatter.format(0.00)}</td>
-             <td>${rubFormatter.format(0.00)}</td>
-             <td>${rubFormatter.format(amount)}</td>
+             <td>${rubFormatter.format(salary + premium)}</td>
              `
     tableResultBody.append(tableTr)
 
