@@ -524,7 +524,7 @@ async function calculate() {
       })
     }
 
-    let premiumHalfYear = 0
+    let premiumsHalfYear = 0
     document.body.querySelectorAll('.calculate-premium .premium__half-year .premium-field__input.premium-sum').forEach((premiumHalfYearEl) => {
       const startPeriodEl = premiumHalfYearEl.closest('.premium__half-year').querySelector(".premium-data__wrapper-period .start-period")
       const endPeriodEl = premiumHalfYearEl.closest('.premium__half-year').querySelector(".premium-data__wrapper-period .end-period")
@@ -542,11 +542,11 @@ async function calculate() {
         }
       })
 
+      let premiumHalfYear = Number(premiumHalfYearEl.value)
       if (reCalculate) {
-        premiumHalfYear += Number(premiumHalfYearEl.value) / totalWorkedDaysInBullingPeriod * totalWorkedDaysInBullingPeriodWithExcludedDays
-      } else {
-        premiumHalfYear += Number(premiumHalfYearEl.value)
+        premiumHalfYear = Number(premiumHalfYearEl.value) / totalWorkedDaysInBullingPeriod * totalWorkedDaysInBullingPeriodWithExcludedDays
       }
+      premiumsHalfYear += premiumHalfYear
 
       premiums.push({
         date: premiumDateEl.value,
@@ -556,7 +556,7 @@ async function calculate() {
 
     })
 
-    let premiumQuarterYear = 0
+    let premiumsQuarterYear = 0
     document.body.querySelectorAll('.calculate-premium .premium__quarter-year .premium-field__input.premium-sum').forEach((premiumQuarterYearEl) => {
       const startPeriodEl = premiumQuarterYearEl.closest('.premium__quarter-year').querySelector(".premium-data__wrapper-period .start-period")
       const endPeriodEl = premiumQuarterYearEl.closest('.premium__quarter-year').querySelector(".premium-data__wrapper-period .end-period")
@@ -574,11 +574,12 @@ async function calculate() {
         }
       })
 
+      let premiumQuarterYear = Number(premiumQuarterYearEl.value)
       if (reCalculate) {
-        premiumQuarterYear += Number(premiumQuarterYearEl.value) / totalWorkedDaysInBullingPeriod * totalWorkedDaysInBullingPeriodWithExcludedDays
-      } else {
-        premiumQuarterYear += Number(premiumQuarterYearEl.value)
+        premiumQuarterYear = Number(premiumQuarterYearEl.value) / totalWorkedDaysInBullingPeriod * totalWorkedDaysInBullingPeriodWithExcludedDays
       }
+
+      premiumsQuarterYear += premiumQuarterYear
 
       premiums.push({
         date: premiumDateEl.value,
@@ -677,7 +678,7 @@ async function calculate() {
       this.innerHTML = (totalCalendarDaysInBullingPeriod / countFullMonth).toFixed(4)
     })
 
-    let totalSalaryWithPremium = totalSalary + yearPremiumWithExcludedDays + premiumHalfYear + premiumQuarterYear
+    let totalSalaryWithPremium = totalSalary + yearPremiumWithExcludedDays + premiumsHalfYear + premiumsQuarterYear
 
     const vacationPay = totalSalaryWithPremium / totalCalendarDaysInBullingPeriod * countVacationsDays
 
@@ -686,8 +687,8 @@ async function calculate() {
     ]
 
     yearPremiumWithExcludedDays && textTotalSalaryWithPremium.push(rubFormatter.format(yearPremiumWithExcludedDays))
-    premiumHalfYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumHalfYear))
-    premiumQuarterYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumQuarterYear))
+    premiumsHalfYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumsHalfYear))
+    premiumsQuarterYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumsQuarterYear))
 
     textTotalSalaryWithPremium = textTotalSalaryWithPremium.join(" + ")
 
