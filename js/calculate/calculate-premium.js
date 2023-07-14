@@ -183,6 +183,11 @@ function checkPremiumInputs() {
   document.body.querySelectorAll(".calculate__bonus-premium input:not([type='checkbox'])").forEach((input) => {
     if (!input.value) {
       isValid = false
+    } else {
+      if (input.classList.contains('input-data')) {
+        input.dataset.date = input.value
+        input.dataset.firstDateMonth = dateToStr(getFirstDayOnMonthByDate(parseDate(input.value)))
+      }
     }
   })
 
