@@ -500,7 +500,7 @@ async function calculate() {
     premiums.push({
       date: premiumYearDateEl.value,
       value: yearPremiumWithExcludedDays,
-      type: "Годовая премия",
+      type: "Годовые премии",
     })
   }
 
@@ -531,7 +531,7 @@ async function calculate() {
     premiums.push({
       date: premiumDateEl.value,
       value: premiumHalfYear,
-      type: "Полугодовая премия",
+      type: "Полугодовые премии",
     })
 
   })
@@ -564,7 +564,55 @@ async function calculate() {
     premiums.push({
       date: premiumDateEl.value,
       value: premiumQuarterYear,
-      type: "Квартальная премия",
+      type: "Квартальные премии",
+    })
+
+  })
+
+  let premiumsOther = 0
+  document.body.querySelectorAll(".calculate-premium .premium__other-production .premium-field__input.premium-sum").forEach((premiumOtherEl) => {
+    const premiumDateEl = premiumOtherEl.closest(".premium__other-production").querySelector(".premium-field__input.input-data.month-accrual")
+
+    let premiumOther = Number(premiumOtherEl.value)
+
+    premiumsOther += premiumOther
+
+    premiums.push({
+      date: premiumDateEl.value,
+      value: premiumOther,
+      type: "Прочие премии",
+    })
+
+  })
+
+  let supplements = 0
+  document.body.querySelectorAll(".calculate-supplement .supplement__supplement .premium-field__input.premium-sum").forEach((supplementEl) => {
+    const supplementDateEl = supplementEl.closest(".supplement__supplement").querySelector(".premium-field__input.input-data.month-accrual")
+
+    let supplement = Number(supplementEl.value)
+
+    supplements += supplement
+
+    premiums.push({
+      date: supplementDateEl.value,
+      value: supplement,
+      type: "Надбавки/Доплаты",
+    })
+
+  })
+
+  let supplementsOthers = 0
+  document.body.querySelectorAll(".calculate-supplement .supplement__other-payments .premium-field__input.premium-sum").forEach((supplementOtherEl) => {
+    const supplementOtherDateEl = supplementOtherEl.closest(".supplement__other-payments").querySelector(".premium-field__input.input-data.month-accrual")
+
+    let supplementOther = Number(supplementOtherEl.value)
+
+    supplementsOthers += supplementOther
+
+    premiums.push({
+      date: supplementOtherDateEl.value,
+      value: supplementOther,
+      type: "Прочие надбавки/доплаты",
     })
 
   })
@@ -625,8 +673,6 @@ async function calculate() {
         lastIndexingSalary = newSalary
       }
     }
-    
-    //       let coefficientIndexing = isIndexing && lastIndexingSalary !== salary ? lastIndexingSalary / monthlySalary : "-"
 
     const monthlyPremiumDateEl = document.body.querySelector(`.calculate__bonus-premium .calculate-premium .premium__monthly .month-accrual[data-first-date-month="${dateToStr(getFirstDayOnMonthByDate(localStartDate))}"]`)
 
@@ -647,8 +693,6 @@ async function calculate() {
         coefficientIndexing = (lastIndexingSalary + lastIndexingMonthlyPremium) / (monthlySalary + monthlyPremium)
       }
     }
-
-    console.log("coefficientIndexing", coefficientIndexing)
 
     const monthlySalaryAfterIndexing = lastIndexingSalary !== monthlySalary ? lastIndexingSalary : 0
     const monthlyPremiumAfterIndexing = lastIndexingSalary !== monthlySalary && monthlyPremium ? lastIndexingMonthlyPremium : 0
@@ -731,6 +775,9 @@ async function calculate() {
   yearPremiumWithExcludedDays && textTotalSalaryWithPremium.push(rubFormatter.format(yearPremiumWithExcludedDays))
   premiumsHalfYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumsHalfYear))
   premiumsQuarterYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumsQuarterYear))
+  premiumsOther && textTotalSalaryWithPremium.push(rubFormatter.format(premiumsOther))
+  supplements && textTotalSalaryWithPremium.push(rubFormatter.format(supplements))
+  supplementsOthers && textTotalSalaryWithPremium.push(rubFormatter.format(supplementsOthers))
 
   textTotalSalaryWithPremium = textTotalSalaryWithPremium.join(" + ")
 
@@ -746,8 +793,8 @@ async function calculate() {
              <td>${premium.date}</td>
              <td>${premium.type}</td>
              <td>-</td>
-             <td>${rubFormatter.format(premium.value)}</td>
-             <td>${rubFormatter.format(0.00)}</td>
+             <td>${rubFormatter.format(!['Надбавки/Доплаты', 'Прочие надбавки/доплаты'].includes(premium.type) ? premium.value : 0.00)}</td>
+             <td>${rubFormatter.format(['Надбавки/Доплаты', 'Прочие надбавки/доплаты'].includes(premium.type) ? premium.value : 0.00)}</td>
              <td>${rubFormatter.format(0.00)}</td>
              <td>${rubFormatter.format(premium.value)}</td>
              `
