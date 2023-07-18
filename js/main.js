@@ -500,7 +500,7 @@ async function calculate() {
     premiums.push({
       date: premiumYearDateEl.value,
       value: yearPremiumWithExcludedDays,
-      type: "Годовые премии",
+      type: "Годовая премия",
     })
   }
 
@@ -531,7 +531,7 @@ async function calculate() {
     premiums.push({
       date: premiumDateEl.value,
       value: premiumHalfYear,
-      type: "Полугодовые премии",
+      type: "Полугодовая премия",
     })
 
   })
@@ -564,55 +564,7 @@ async function calculate() {
     premiums.push({
       date: premiumDateEl.value,
       value: premiumQuarterYear,
-      type: "Квартальные премии",
-    })
-
-  })
-
-  let premiumsOther = 0
-  document.body.querySelectorAll(".calculate-premium .premium__other-production .premium-field__input.premium-sum").forEach((premiumOtherEl) => {
-    const premiumDateEl = premiumOtherEl.closest(".premium__other-production").querySelector(".premium-field__input.input-data.month-accrual")
-
-    let premiumOther = Number(premiumOtherEl.value)
-
-    premiumsOther += premiumOther
-
-    premiums.push({
-      date: premiumDateEl.value,
-      value: premiumOther,
-      type: "Прочие премии",
-    })
-
-  })
-
-  let supplements = 0
-  document.body.querySelectorAll(".calculate-supplement .supplement__supplement .premium-field__input.premium-sum").forEach((supplementEl) => {
-    const supplementDateEl = supplementEl.closest(".supplement__supplement").querySelector(".premium-field__input.input-data.month-accrual")
-
-    let supplement = Number(supplementEl.value)
-
-    supplements += supplement
-
-    premiums.push({
-      date: supplementDateEl.value,
-      value: supplement,
-      type: "Надбавки/Доплаты",
-    })
-
-  })
-
-  let supplementsOthers = 0
-  document.body.querySelectorAll(".calculate-supplement .supplement__other-payments .premium-field__input.premium-sum").forEach((supplementOtherEl) => {
-    const supplementOtherDateEl = supplementOtherEl.closest(".supplement__other-payments").querySelector(".premium-field__input.input-data.month-accrual")
-
-    let supplementOther = Number(supplementOtherEl.value)
-
-    supplementsOthers += supplementOther
-
-    premiums.push({
-      date: supplementOtherDateEl.value,
-      value: supplementOther,
-      type: "Прочие надбавки/доплаты",
+      type: "Квартальная премия",
     })
 
   })
@@ -775,9 +727,6 @@ async function calculate() {
   yearPremiumWithExcludedDays && textTotalSalaryWithPremium.push(rubFormatter.format(yearPremiumWithExcludedDays))
   premiumsHalfYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumsHalfYear))
   premiumsQuarterYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumsQuarterYear))
-  premiumsOther && textTotalSalaryWithPremium.push(rubFormatter.format(premiumsOther))
-  supplements && textTotalSalaryWithPremium.push(rubFormatter.format(supplements))
-  supplementsOthers && textTotalSalaryWithPremium.push(rubFormatter.format(supplementsOthers))
 
   textTotalSalaryWithPremium = textTotalSalaryWithPremium.join(" + ")
 
@@ -787,35 +736,29 @@ async function calculate() {
   resultCalculate__averageIncome.html(`${rubFormatter.format(totalSalaryWithPremium)} / ${totalCalendarDaysInBullingPeriod} дн. — средний дневной заработок ( ${rubFormatter.format(totalSalaryWithPremium / totalCalendarDaysInBullingPeriod)} )`)
   resultCalculate__vacation.html(`${countVacationsDays} дн. — количество дней отпуска`)
 
-  premiums.map((premium) => {
-    const tableTr = document.createElement("tr")
-    tableTr.innerHTML = `
-             <td>${premium.date}</td>
-             <td>${premium.type}</td>
-             <td>-</td>
-             <td>${rubFormatter.format(!['Надбавки/Доплаты', 'Прочие надбавки/доплаты'].includes(premium.type) ? premium.value : 0.00)}</td>
-             <td>${rubFormatter.format(['Надбавки/Доплаты', 'Прочие надбавки/доплаты'].includes(premium.type) ? premium.value : 0.00)}</td>
-             <td>${rubFormatter.format(0.00)}</td>
-             <td>${rubFormatter.format(premium.value)}</td>
-             `
-    tableResultBody.append(tableTr)
-  })
-
   Object.keys(salaryPerMonths).forEach((key) => {
 
     const salary = salaryPerMonths[key].monthlySalaryAfterIndexing || salaryPerMonths[key].monthlySalary
-    const premium = salaryPerMonths[key].monthlyPremiumAfterIndexing || salaryPerMonths[key].monthlyPremium
+    const monthlyPremium = salaryPerMonths[key].monthlyPremiumAfterIndexing || salaryPerMonths[key].monthlyPremium
     const coefficientIndexing = salaryPerMonths?.[key]?.coefficientIndexing !== "-" ? Number(salaryPerMonths?.[key]?.coefficientIndexing)?.toFixed(4) : "-"
+
+    let totalPremium = monthlyPremium
+
+    premiums.map((premium) => {
+      if (dateToStr(getFirstDayOnMonthByDate(parseDate(premium.date))) === key) {
+        totalPremium += premium.value
+      }
+    })
 
     const tableTr = document.createElement("tr")
     tableTr.innerHTML = `
              <td>${key}</td>
              <td>${rubFormatter.format(salary)}</td>
              <td>${coefficientIndexing}</td>
-             <td>${rubFormatter.format(premium)}</td>
+             <td>${rubFormatter.format(totalPremium)}</td>
              <td>${rubFormatter.format(0.00)}</td>
              <td>${rubFormatter.format(0.00)}</td>
-             <td>${rubFormatter.format(salary + premium)}</td>
+             <td>${rubFormatter.format(salary + totalPremium)}</td>
              `
     tableResultBody.append(tableTr)
 
