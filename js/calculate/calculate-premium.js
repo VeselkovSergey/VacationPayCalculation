@@ -174,15 +174,18 @@ function checkPremiumInputs() {
   if (stepCounter !== 3) {
     return
   }
-  let isValid = checkCrossDate(calculatePremium, ".premium__last-year .input-data")
+  let premiumIsValid = checkCrossDate(calculatePremium, ".premium__last-year .input-data")
     && checkCrossDate(calculatePremium, ".premium__half-year > .premium-data__wrapper .input-data")
     && checkCrossDate(calculatePremium, ".premium__quarter-year > .premium-data__wrapper .input-data")
     && checkCrossDate(calculatePremium, ".premium__monthly .input-data")
     && checkCrossDate(calculatePremium, ".premium__other-production .input-data")
 
+  let supplementIsValid = checkCrossDate(calculateSupplement, ".supplement__supplement .input-data")
+    && checkCrossDate(calculateSupplement, ".supplement__other-payments .input-data")
+
   document.body.querySelectorAll(".calculate__bonus-premium input:not([type='checkbox'])").forEach((input) => {
     if (!input.value) {
-      isValid = false
+      premiumIsValid = false
     } else {
       if (input.classList.contains('input-data')) {
         input.dataset.date = input.value
@@ -191,7 +194,18 @@ function checkPremiumInputs() {
     }
   })
 
-  if (isValid) {
+  document.body.querySelectorAll(".calculate__bonus-supplement input:not([type='checkbox'])").forEach((input) => {
+    if (!input.value) {
+      supplementIsValid = false
+    } else {
+      if (input.classList.contains('input-data')) {
+        input.dataset.date = input.value
+        input.dataset.firstDateMonth = dateToStr(getFirstDayOnMonthByDate(parseDate(input.value)))
+      }
+    }
+  })
+
+  if (premiumIsValid && supplementIsValid) {
     btnNext.removeAttribute("disabled")
   } else {
     btnNext.setAttribute("disabled", "true")

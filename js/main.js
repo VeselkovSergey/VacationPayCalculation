@@ -490,7 +490,7 @@ async function calculate() {
 
   totalCalendarDaysInBullingPeriod = Number(totalCalendarDaysInBullingPeriod.toFixed(4))
 
-  // годовая, полгодовые и квартальные премии
+  // годовая, полгодовые и квартальные премии и прочие производственные
   const premiums = []
   let premiumYearEl = document.body.querySelector(".calculate-premium .premium__last-year .premium-field__input")
   let premiumYearDateEl = premiumYearEl?.closest(".premium__last-year").querySelector(".premium-field__input.input-data.month-accrual")
@@ -569,6 +569,22 @@ async function calculate() {
 
   })
 
+  let monthlyOtherPremium = 0
+  document.body.querySelectorAll(`.calculate__bonus-premium .calculate-premium .premium__other-production`).forEach((monthlyOtherPremiumEl) => {
+    const dateEl = monthlyOtherPremiumEl.querySelector('.premium-field__input.input-data.month-accrual')
+    const premiumDate = dateEl.dataset.date
+
+    const valueEl = monthlyOtherPremiumEl.querySelector('.premium-field__input.premium-sum')
+    const value = Number(valueEl.value)
+
+    monthlyOtherPremium += value
+
+    premiums.push({
+      date: premiumDate,
+      value: value,
+      type: "Прочие производственные",
+    })
+  })
 
 
   // бежим по каждому дню расчетного периода
@@ -589,6 +605,9 @@ async function calculate() {
 
   let lastIndexingMonthlyPremium = 0
   let isIndexingMonthlyPremium = false
+
+  let lastIndexingMonthlySupplement = 0
+  let isIndexingMonthlySupplement = false
 
   const salaryEveryDay = {}
   const salaryPerMonths = {}
@@ -626,6 +645,7 @@ async function calculate() {
       }
     }
 
+    // месячные премии индексируемые
     const monthlyPremiumDateEl = document.body.querySelector(`.calculate__bonus-premium .calculate-premium .premium__monthly .month-accrual[data-first-date-month="${dateToStr(getFirstDayOnMonthByDate(localStartDate))}"]`)
 
     const monthlyPremiumEl = monthlyPremiumDateEl?.closest(".premium__monthly").querySelector(".premium-field__input.premium-sum")
@@ -638,16 +658,34 @@ async function calculate() {
       lastIndexingMonthlyPremium = monthlyPremium
     }
 
+    // прочие месячные надбавки индексируемые
+    const monthlySupplementDateEl = document.body.querySelector(`.calculate__bonus-supplement .calculate-supplement .supplement__other-payments .month-accrual[data-first-date-month="${dateToStr(getFirstDayOnMonthByDate(localStartDate))}"]`)
+
+    const monthlySupplementEl = monthlySupplementDateEl?.closest(".supplement__other-payments").querySelector(".premium-field__input.premium-sum")
+    const monthlySupplement = monthlySupplementEl ? Number(monthlySupplementEl?.value) : 0
+
+    const monthlySupplementIsIndexingEl = monthlySupplementDateEl?.closest(".supplement__other-payments").querySelector(".payment-switcher__checkbox")
+
+    if (!isIndexingMonthlySupplement && monthlySupplementIsIndexingEl?.checked) {
+      isIndexingMonthlySupplement = true
+      lastIndexingMonthlySupplement = monthlySupplement
+    }
+
     let coefficientIndexing = "-"
     if (isIndexing && lastIndexingSalary !== monthlySalary) {
       coefficientIndexing = lastIndexingSalary / monthlySalary
       if (isIndexingMonthlyPremium && monthlyPremium) {
         coefficientIndexing = (lastIndexingSalary + lastIndexingMonthlyPremium) / (monthlySalary + monthlyPremium)
       }
+
+      if (isIndexingMonthlySupplement && monthlySupplement) {
+        coefficientIndexing = (lastIndexingSalary + lastIndexingMonthlyPremium + lastIndexingMonthlySupplement) / (monthlySalary + monthlyPremium + monthlySupplement)
+      }
     }
 
     const monthlySalaryAfterIndexing = lastIndexingSalary !== monthlySalary ? lastIndexingSalary : 0
     const monthlyPremiumAfterIndexing = lastIndexingSalary !== monthlySalary && monthlyPremium ? lastIndexingMonthlyPremium : 0
+    const monthlySupplementAfterIndexing = lastIndexingSalary !== monthlySalary && monthlySupplement ? lastIndexingMonthlySupplement : 0
 
     let isNotCalculate = !!excludedPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))] && !!excludedPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))].find((period) => {
       return checkDateBetweenDates(period.startPeriod, period.endPeriod, dateStr)
@@ -660,6 +698,7 @@ async function calculate() {
 
       monthlyPremium: monthlyPremium,
       monthlyPremiumAfterIndexing: monthlyPremiumAfterIndexing,
+      monthlySupplementAfterIndexing: monthlySupplementAfterIndexing,
 
       coefficientIndexing: coefficientIndexing,
 
@@ -671,6 +710,9 @@ async function calculate() {
 
       premiumPerDayByWorkedDays: monthlyPremium / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
       premiumPerDayAfterIndexingByWorkedDays: monthlyPremiumAfterIndexing / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+
+      supplementPerDayByWorkedDays: monthlySupplement / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
+      supplementPerDayAfterIndexingByWorkedDays: monthlySupplementAfterIndexing / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
 
       countDaysInMonth: countDaysInMonth[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
       countDaysInMonthByPeriod: countDaysInMonthByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
@@ -686,19 +728,23 @@ async function calculate() {
     }
 
     salaryPerMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] = {
-      
+
       monthlySalary: monthlySalary,
       monthlySalaryAfterIndexing: monthlySalaryAfterIndexing,
-      
+
       monthlyPremium: monthlyPremium,
       monthlyPremiumAfterIndexing: monthlyPremiumAfterIndexing,
-      
+
+      monthlySupplement: monthlySupplement,
+      monthlySupplementAfterIndexing: monthlySupplementAfterIndexing,
+
       coefficientIndexing: coefficientIndexing,
     }
 
     if (salaryEveryDay[dateStr].isCalculate && salaryEveryDay[dateStr].isWorkedDay) {
       totalSalary += (salaryEveryDay[dateStr].salaryPerDayAfterIndexingByWorkedDays || salaryEveryDay[dateStr].salaryPerDayByWorkedDays)
       totalSalary += (salaryEveryDay[dateStr].premiumPerDayAfterIndexingByWorkedDays || salaryEveryDay[dateStr].premiumPerDayByWorkedDays)
+      totalSalary += (salaryEveryDay[dateStr].supplementPerDayAfterIndexingByWorkedDays || salaryEveryDay[dateStr].supplementPerDayByWorkedDays)
     }
 
     if (selectSalary.value === "salary" && newSalaryEl) {
@@ -716,7 +762,12 @@ async function calculate() {
     this.innerHTML = (totalCalendarDaysInBullingPeriod / countFullMonth).toFixed(4)
   })
 
-  let totalSalaryWithPremium = totalSalary + yearPremiumWithExcludedDays + premiumsHalfYear + premiumsQuarterYear
+  let totalSalaryWithPremium =
+    totalSalary
+    + yearPremiumWithExcludedDays
+    + premiumsHalfYear
+    + premiumsQuarterYear
+    + monthlyOtherPremium
 
   const vacationPay = totalSalaryWithPremium / totalCalendarDaysInBullingPeriod * countVacationsDays
 
@@ -727,6 +778,7 @@ async function calculate() {
   yearPremiumWithExcludedDays && textTotalSalaryWithPremium.push(rubFormatter.format(yearPremiumWithExcludedDays))
   premiumsHalfYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumsHalfYear))
   premiumsQuarterYear && textTotalSalaryWithPremium.push(rubFormatter.format(premiumsQuarterYear))
+  monthlyOtherPremium && textTotalSalaryWithPremium.push(rubFormatter.format(monthlyOtherPremium))
 
   textTotalSalaryWithPremium = textTotalSalaryWithPremium.join(" + ")
 
@@ -740,6 +792,7 @@ async function calculate() {
 
     const salary = salaryPerMonths[key].monthlySalaryAfterIndexing || salaryPerMonths[key].monthlySalary
     const monthlyPremium = salaryPerMonths[key].monthlyPremiumAfterIndexing || salaryPerMonths[key].monthlyPremium
+    const monthlySupplement = salaryPerMonths[key].monthlySupplementAfterIndexing || salaryPerMonths[key].monthlySupplement
     const coefficientIndexing = salaryPerMonths?.[key]?.coefficientIndexing !== "-" ? Number(salaryPerMonths?.[key]?.coefficientIndexing)?.toFixed(4) : "-"
 
     let totalPremium = monthlyPremium
@@ -757,8 +810,8 @@ async function calculate() {
              <td>${coefficientIndexing}</td>
              <td>${rubFormatter.format(totalPremium)}</td>
              <td>${rubFormatter.format(0.00)}</td>
-             <td>${rubFormatter.format(0.00)}</td>
-             <td>${rubFormatter.format(salary + totalPremium)}</td>
+             <td>${rubFormatter.format(monthlySupplement)}</td>
+             <td>${rubFormatter.format(salary + totalPremium + monthlySupplement)}</td>
              `
     tableResultBody.append(tableTr)
 

@@ -515,9 +515,12 @@ input[type=radio].visually-hidden {
 }
 
 .premium-data--half-year .premium-data__hide-fields, .premium-data--quarter-year .premium-data__hide-fields,
-.supplement-data--half-year .premium-data__hide-fields,
-.supplement-data--quarter-year .premium-data__hide-fields {
+.premium-data__hide-fields, .premium-data__hide-fields {
   left: 665px;
+}
+
+.supplement-data .premium-data__hide-fields {
+  left: 500px;
 }
 
 .salary-data__hide-fields {
