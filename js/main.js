@@ -731,6 +731,7 @@ async function calculate() {
 
       monthlySalary: monthlySalary,
       monthlySalaryAfterIndexing: monthlySalaryAfterIndexing,
+      monthlySalaryForWorkedDays: monthlySalary / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] * workedDaysInMonthsByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
 
       monthlyPremium: monthlyPremium,
       monthlyPremiumAfterIndexing: monthlyPremiumAfterIndexing,
@@ -790,7 +791,7 @@ async function calculate() {
 
   Object.keys(salaryPerMonths).forEach((key) => {
 
-    const salary = salaryPerMonths[key].monthlySalaryAfterIndexing || salaryPerMonths[key].monthlySalary
+    const salary = salaryPerMonths[key].monthlySalaryForWorkedDays
     const monthlyPremium = salaryPerMonths[key].monthlyPremiumAfterIndexing || salaryPerMonths[key].monthlyPremium
     const monthlySupplement = salaryPerMonths[key].monthlySupplementAfterIndexing || salaryPerMonths[key].monthlySupplement
     const coefficientIndexing = salaryPerMonths?.[key]?.coefficientIndexing !== "-" ? Number(salaryPerMonths?.[key]?.coefficientIndexing)?.toFixed(4) : "-"
