@@ -1,6 +1,6 @@
 let holidays = [
-  "10.07.2023",
-  "20.07.2023",
+  // "10.07.2023",
+  // "20.07.2023",
 ]
 
 let stepCounter = 0
@@ -423,6 +423,37 @@ async function calculate() {
     })
   })
 
+
+  const supplementByPeriods = {}
+  let totalSupplementByPeriods = 0
+  // бежим по всем доп. выплатам
+  document.body.querySelectorAll(".calculate__bonus-supplement .supplement-data--supplemen").forEach((supplementDates) => {
+    const startDateEl = supplementDates.querySelector(".input-data.start-date")
+    const endDateEl = supplementDates.querySelector(".input-data.end-date")
+    const valueEl = supplementDates.querySelector(".premium-field__input.premium-sum")
+
+    const startDate = parseDate(startDateEl.value)
+    const endDate = parseDate(endDateEl.value)
+    const value = Number(valueEl.value)
+
+    const splitDatesByMonth = splitPeriodOnMonth(startDate, endDate)
+
+    Object.keys(splitDatesByMonth).forEach((firstNumberInMonth) => {
+
+      if (!supplementByPeriods[firstNumberInMonth]) {
+        supplementByPeriods[firstNumberInMonth] = 0
+      }
+
+      const startPeriodOnMonth = splitDatesByMonth[firstNumberInMonth].startPeriodOnMonth
+      const endPeriodOnMonth = splitDatesByMonth[firstNumberInMonth].endPeriodOnMonth
+      const workedDaysOnMonth = getCountWorkedDaysByDates(getFirstDayOnMonthByDate(parseDate(startPeriodOnMonth)), getLastDayOnMonthByDate(parseDate(endPeriodOnMonth)), workedDaysFromBackEnd)
+      const workedDaysOnPeriod = getCountWorkedDaysByDates(parseDate(startPeriodOnMonth), parseDate(endPeriodOnMonth), workedDaysFromBackEnd)
+
+      supplementByPeriods[firstNumberInMonth] += (value / workedDaysOnMonth * workedDaysOnPeriod)
+      totalSupplementByPeriods += supplementByPeriods[firstNumberInMonth]
+    })
+  })
+
   let totalCalendarDaysInBullingPeriod = 0
   let countFullMonth = 0
 
@@ -739,6 +770,8 @@ async function calculate() {
       monthlySupplement: monthlySupplement,
       monthlySupplementAfterIndexing: monthlySupplementAfterIndexing,
 
+      supplementByPeriods: supplementByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))] || 0,
+
       coefficientIndexing: coefficientIndexing,
     }
 
@@ -762,6 +795,8 @@ async function calculate() {
   averageCountDaysSpanBillingPeriod.each(function () {
     this.innerHTML = (totalCalendarDaysInBullingPeriod / countFullMonth).toFixed(4)
   })
+
+  totalSalary += totalSupplementByPeriods
 
   let totalSalaryWithPremium =
     totalSalary
@@ -795,6 +830,7 @@ async function calculate() {
     const monthlyPremium = salaryPerMonths[key].monthlyPremiumAfterIndexing || salaryPerMonths[key].monthlyPremium
     const monthlySupplement = salaryPerMonths[key].monthlySupplementAfterIndexing || salaryPerMonths[key].monthlySupplement
     const coefficientIndexing = salaryPerMonths?.[key]?.coefficientIndexing !== "-" ? Number(salaryPerMonths?.[key]?.coefficientIndexing)?.toFixed(4) : "-"
+    const supplementByPeriods = salaryPerMonths[key].supplementByPeriods || 0
 
     let totalPremium = monthlyPremium
 
@@ -810,9 +846,9 @@ async function calculate() {
              <td>${rubFormatter.format(salary)}</td>
              <td>${coefficientIndexing}</td>
              <td>${rubFormatter.format(totalPremium)}</td>
-             <td>${rubFormatter.format(0.00)}</td>
+             <td>${rubFormatter.format(supplementByPeriods)}</td>
              <td>${rubFormatter.format(monthlySupplement)}</td>
-             <td>${rubFormatter.format(salary + totalPremium + monthlySupplement)}</td>
+             <td>${rubFormatter.format(salary + totalPremium + supplementByPeriods + monthlySupplement)}</td>
              `
     tableResultBody.append(tableTr)
 
