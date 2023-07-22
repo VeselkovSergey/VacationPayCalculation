@@ -1,7 +1,30 @@
 let holidays = [
-  // "10.07.2023",
-  // "20.07.2023",
+  "01.01.XXXX",
+  "02.01.XXXX",
+  "03.01.XXXX",
+  "04.01.XXXX",
+  "05.01.XXXX",
+  "06.01.XXXX",
+  "07.01.XXXX",
+  "08.01.XXXX",
+  "23.02.XXXX",
+  "08.03.XXXX",
+  "01.05.XXXX",
+  "09.05.XXXX",
+  "12.06.XXXX",
+  "04.11.XXXX",
 ]
+
+// сделаем все года с 1970 по 2100 с праздничными днями
+function getHolidays() {
+  let holidaysAllYears = []
+  for (let i = 1970; i <= 2100; i++) {
+    holidays.map((holiday) => {
+      holidaysAllYears.push(holiday.replace('XXXX', `${i}`))
+    })
+  }
+  return holidaysAllYears
+}
 
 let stepCounter = 0
 
@@ -105,7 +128,7 @@ function addDayIfHoliday(startDate, countDays, startCountDays = null) {
   let calcEndDate = parseDate(startDate).addDays((countDays - 1))
 
   let includeHolidays = 0
-  holidays.map(holiday => {
+  getHolidays().map(holiday => {
     if (checkDateBetweenDates(startDate, dateConvertToString(calcEndDate), holiday)) {
       includeHolidays++
     }
@@ -305,7 +328,7 @@ function setPropsOnVacationPeriod(startDateInputVacation, endDateInputVacation, 
       const countDaysLocal = datediff(parseDate(startDateInputVacation.val()), parseDate(endDateInputVacation.val()))
       if (countDaysLocal > 0) {
         let includeHolidays = 0
-        holidays.map(holiday => {
+        getHolidays().map(holiday => {
           if (checkDateBetweenDates(startDateInputVacation.val(), endDateInputVacation.val(), holiday)) {
             includeHolidays++
           }
