@@ -793,7 +793,7 @@ async function calculate() {
       monthlySupplement: monthlySupplement,
       monthlySupplementAfterIndexing: monthlySupplementAfterIndexing,
 
-      supplementByPeriods: supplementByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))] || 0,
+      supplementByPeriods: supplementByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))] ? (supplementByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))] / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] * workedDaysInMonthsByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))]) : 0,
 
       coefficientIndexing: coefficientIndexing,
     }
@@ -819,7 +819,11 @@ async function calculate() {
     this.innerHTML = (totalCalendarDaysInBullingPeriod / countFullMonth).toFixed(4)
   })
 
-  totalSalary += totalSupplementByPeriods
+
+  totalSalary += Object.keys(salaryPerMonths).reduce((store, key) => {
+    store += salaryPerMonths[key].supplementByPeriods
+    return store
+  }, 0)
 
   let totalSalaryWithPremium =
     totalSalary
@@ -863,9 +867,12 @@ async function calculate() {
       }
     })
 
+    const dateObject = dateConvertToObject(key)
+    const monthName = monthsByIndex[dateObject.month - 1]
+
     const tableTr = document.createElement("tr")
     tableTr.innerHTML = `
-             <td>${key}</td>
+             <td><div style="display: flex;"><div>${monthName}</div> <div style="margin-left: auto; margin-right: 10px;">${dateObject.year}</div></div></td>
              <td>${rubFormatter.format(salary)}</td>
              <td>${coefficientIndexing}</td>
              <td>${rubFormatter.format(totalPremium)}</td>
