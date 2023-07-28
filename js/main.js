@@ -71,6 +71,35 @@ const tableResultBody = $(".calculate__result-table.table-result tbody")
 
 const salaryDateTextElement = $("body > section > ul.calculate__step-list.step > li:nth-child(3) > div.step__item-salary > div.step__data.salary-data > div > span > span")
 
+const downloadResultButtonEl = document.body.querySelector('.calculate__btn-result')
+downloadResultButtonEl.addEventListener('click', async () => {
+
+  let params = new URLSearchParams();
+  params.set('data', JSON.stringify(resultObject));
+
+  await fetch("./dataToDocx.php", {
+    method: 'POST',
+    body: params
+  }).then((response) => {
+    response.text().then((link) => {
+      function download(filename, link) {
+        const element = document.createElement("a")
+        element.setAttribute("href", "./" + link)
+        element.setAttribute("download", filename)
+
+        element.style.display = "none"
+        document.body.appendChild(element)
+
+        element.click()
+
+        document.body.removeChild(element)
+      }
+
+      download("Отпускные.docx", link)
+    })
+  })
+})
+
 // button support
 let stepList = document.querySelector(".step")
 
@@ -851,6 +880,18 @@ async function calculate() {
   resultCalculate__averageIncome.html(`${rubFormatter.format(totalSalaryWithPremium)} / ${totalCalendarDaysInBullingPeriod} дн. — средний дневной заработок ( ${rubFormatter.format(totalSalaryWithPremium / totalCalendarDaysInBullingPeriod)} )`)
   resultCalculate__vacation.html(`${countVacationsDays} дн. — количество дней отпуска`)
 
+  resultObject = {
+    calculate: `( ${textTotalSalaryWithPremium} ) / ${totalCalendarDaysInBullingPeriod} дн. x ${countVacationsDays} дн. = ${rubFormatter.format(vacationPay)}`,
+    salary: `${rubFormatter.format(totalSalaryWithPremium)} — заработок за расчетный период`,
+    days: `${totalCalendarDaysInBullingPeriod} дн. — количество календарных дней расчетного периода`,
+    averageIncome: `${rubFormatter.format(totalSalaryWithPremium)} / ${totalCalendarDaysInBullingPeriod} дн. — средний дневной заработок ( ${rubFormatter.format(totalSalaryWithPremium / totalCalendarDaysInBullingPeriod)} )`,
+    vacation: `${countVacationsDays} дн. — количество дней отпуска`,
+    countVacationsDays: countVacationsDays,
+    vacationPay: rubFormatter.format(vacationPay),
+    startVacation: startDateInputVacation.val(),
+    perMonth: [],
+  }
+
   Object.keys(salaryPerMonths).forEach((key) => {
 
     const salary = salaryPerMonths[key].monthlySalaryForWorkedDays
@@ -882,10 +923,23 @@ async function calculate() {
              `
     tableResultBody.append(tableTr)
 
+    resultObject.perMonth.push({
+      monthName: monthName,
+      year: dateObject.year,
+      salary: rubFormatter.format(salary),
+      coefficientIndexing: coefficientIndexing,
+      totalPremium: rubFormatter.format(totalPremium),
+      supplementByPeriods: rubFormatter.format(supplementByPeriods),
+      monthlySupplement: rubFormatter.format(monthlySupplement),
+      total: rubFormatter.format(salary + totalPremium + supplementByPeriods + monthlySupplement),
+    })
+
   })
 
   // }
 }
+
+let resultObject = {}
 
 const rubFormatter = new Intl.NumberFormat("ru-RU", {
   style: "currency",
