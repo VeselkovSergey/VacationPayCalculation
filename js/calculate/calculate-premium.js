@@ -174,6 +174,13 @@ function checkPremiumInputs() {
   if (stepCounter !== 3) {
     return
   }
+
+  // если не было индексации, то нужно выключить галочки
+  if (!wasIndexing()) {
+    document.body.querySelector('.calculate__bonus-premium').classList.add('without-indexing')
+    document.body.querySelector('.calculate__bonus-supplement').classList.add('without-indexing')
+  }
+
   let premiumIsValid = checkCrossDate(calculatePremium, ".premium__last-year .input-data")
     && checkCrossDate(calculatePremium, ".premium__half-year > .premium-data__wrapper .input-data")
     && checkCrossDate(calculatePremium, ".premium__quarter-year > .premium-data__wrapper .input-data")

@@ -182,7 +182,7 @@ function checkAndSetCountValidDays() {
   // const totalDays = workedDaysInFullPeriod - (29.3 * countMonthInExpectDays)
   const totalMonths = countMonthInFullPeriod - countMonthInExpectDays
   // const res = setCountDaysInputBillingPeriod(totalDays, totalMonths, workedDays)
-  setWagePeriods(startDateInputBillingPeriod.val(), totalMonths)
+  setWagePeriods(startDateInputBillingPeriod.val(), 12)
 
   calculate()
 

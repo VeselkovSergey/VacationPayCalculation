@@ -199,3 +199,7 @@ function checkCrossDate(container, queryDateInput) {
 
   return isValid
 }
+
+const wasIndexing = () => {
+  return (selectSalary.value === "salary" && salarySwitcher.checked) || (selectSalary.value === "wage" && wageSwitcher.checked)
+}
