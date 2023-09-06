@@ -814,6 +814,7 @@ async function calculate() {
 
       monthlySalary: monthlySalary,
       monthlySalaryAfterIndexing: monthlySalaryAfterIndexing,
+      monthlySalaryAfterIndexingForWorkedDays: monthlySalaryAfterIndexing / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] * workedDaysInMonthsByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
       monthlySalaryForWorkedDays: monthlySalary / workedDaysInMonths[dateToStr(getFirstDayOnMonthByDate(localStartDate))] * workedDaysInMonthsByPeriods[dateToStr(getFirstDayOnMonthByDate(localStartDate))],
 
       monthlyPremium: monthlyPremium,
@@ -894,7 +895,7 @@ async function calculate() {
 
   Object.keys(salaryPerMonths).forEach((key) => {
 
-    const salary = salaryPerMonths[key].monthlySalaryForWorkedDays
+    const salary = salaryPerMonths[key].monthlySalaryAfterIndexingForWorkedDays || salaryPerMonths[key].monthlySalaryForWorkedDays
     const monthlyPremium = salaryPerMonths[key].monthlyPremiumAfterIndexing || salaryPerMonths[key].monthlyPremium
     const monthlySupplement = salaryPerMonths[key].monthlySupplementAfterIndexing || salaryPerMonths[key].monthlySupplement
     const coefficientIndexing = salaryPerMonths?.[key]?.coefficientIndexing !== "-" ? Number(salaryPerMonths?.[key]?.coefficientIndexing)?.toFixed(4) : "-"
@@ -921,7 +922,7 @@ async function calculate() {
              <td>${rubFormatter.format(monthlySupplement)}</td>
              <td>${rubFormatter.format(salary + totalPremium + supplementByPeriods + monthlySupplement)}</td>
              `
-    tableResultBody.append(tableTr)
+    tableResultBody.prepend(tableTr)
 
     resultObject.perMonth.push({
       monthName: monthName,
