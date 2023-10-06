@@ -372,6 +372,10 @@ input[type=radio].visually-hidden {
   display: none;
 }
 
+.step-buttons__next {
+  margin-right: 20px;
+}
+
 .step-buttons__prev--arrow {
   justify-content: start;
   padding-left: 90px;
@@ -1166,11 +1170,6 @@ input[type=radio].visually-hidden {
   line-height: 22px;
   border-bottom: 1px solid #D6D6D6;
   color: black;
-}
-
-.calculate__btns-result {
-  display: flex;
-  margin-top: 52px;
 }
 
 .calculate__btn-result,

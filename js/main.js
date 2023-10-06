@@ -981,13 +981,6 @@ btnNext.addEventListener("click", function () {
 
   stepCounter++
 
-  if (stepCounter === stepItem.length - 2) {
-    this.classList.remove("step-buttons__next--arrow")
-    this.textContent = "Рассчитать отпускные"
-  } else if (stepCounter === stepItem.length - 1) {
-    // document.querySelector(".step-buttons").style.display = "none"
-  }
-
   stepItem[stepCounter].style.display = "block"
   navElem[stepCounter].classList.add("navigation__elem--active")
 
@@ -1007,7 +1000,23 @@ btnNext.addEventListener("click", function () {
     calculate()
   }
 
+  processControlButton()
+
 })
+
+const processControlButton = () => {
+  document.querySelector(".step-buttons__next").style.display = ""
+  document.querySelector(".calculate__btn-result").style.display = "none"
+  document.querySelector(".calculate__restart").style.display = "none"
+  if (stepCounter === stepItem.length - 2) {
+    document.querySelector(".step-buttons__next").classList.remove("step-buttons__next--arrow")
+    document.querySelector(".step-buttons__next").textContent = "Рассчитать отпускные"
+  } else if (stepCounter === stepItem.length - 1) {
+    document.querySelector(".step-buttons__next").style.display = "none"
+    document.querySelector(".calculate__btn-result").style.display = ""
+    document.querySelector(".calculate__restart").style.display = ""
+  }
+}
 
 btnPrev.addEventListener("click", function () {
 
@@ -1028,6 +1037,8 @@ btnPrev.addEventListener("click", function () {
   }
 
   btnNext.removeAttribute("disabled")
+
+  processControlButton()
 
 })
 
