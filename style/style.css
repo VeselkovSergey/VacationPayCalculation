@@ -514,12 +514,16 @@ input[type=radio].visually-hidden {
   top: 34px;
 }
 
+.premium-data.premium__monthly .premium-data__hide-fields {
+  left: 500px;
+}
+
 .premium-data--half-year .premium-data__hide-fields, .premium-data--quarter-year .premium-data__hide-fields,
-.premium-data__hide-fields, .premium-data__hide-fields {
+.premium-data__hide-fields .premium-data__hide-fields {
   left: 665px;
 }
 
-.supplement-data .premium-data__hide-fields {
+.supplement-data.supplement__supplement .premium-data__hide-fields {
   left: 500px;
 }
 

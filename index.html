@@ -571,7 +571,7 @@
   </template>
 
   <template id="premium-template__monthly">
-    <div class="calculate-premium__content premium-data premium__monthly">
+    <div class="calculate-premium__content supplement-data--supplemen premium-data premium__monthly">
 
       <div class="premium-data__wrapper">
         <span class="premium-data__caption">Сумма премии 
@@ -587,11 +587,18 @@
         </label>
       </div>
 
-      <div class="premium-data__wrapper">
-        <span class="premium-data__caption">Месяц начисления</span>
-        <label class="premium-data__label premium-field premium-field--data">
-          <input class="premium-field__input input-data month-accrual" type="text" placeholder="ДД.ММ.ГГГГ">
-        </label>
+      <div class="premium-data__wrapper-period">
+        <div class="premium-data__wrapper">
+          <span class="premium-data__caption">Начислена за период</span>
+          <label class="premium-data__label premium-field premium-field--data">
+            <input class="premium-field__input input-data start-date" type="text" placeholder="ДД.ММ.ГГГГ">
+          </label>
+        </div>
+        <div class="premium-data__wrapper">
+          <label class="premium-data__label premium-field premium-field--data">
+            <input class="premium-field__input input-data end-date" type="text" placeholder="ДД.ММ.ГГГГ">
+          </label>
+        </div>
       </div>
 
       <div class="premium-data__switcher">
@@ -676,6 +683,26 @@
           <label class="premium-data__label premium-field premium-field--data">
             <input class="premium-field__input input-data end-date" type="text" placeholder="ДД.ММ.ГГГГ">
           </label>
+        </div>
+      </div>
+
+      <div class="supplement-data__switcher">
+        <label class="supplement-data__payment-switcher payment-switcher">
+          <input class="visually-hidden payment-switcher__checkbox" type="checkbox">
+          <span class="payment-switcher__label"></span>
+          Размер надбавки или доплаты – фиксированный процент от оклада
+        </label>
+        <div class="supplement-data__support support">
+          <button class="support__button"></button>
+          <p class="support__answer support__answer--payment">При расчете отпускных корректируются на&nbsp;коэффициент
+            индексации зарплата и&nbsp;те&nbsp;выплаты, которые увеличиваются одновременно с&nbsp;окладом. Если сумма
+            доплаты или надбавки не&nbsp;изменяется, она не&nbsp;корректируется на&nbsp;коэффициент повышения. Если
+            сумма установлена в&nbsp;процентах к&nbsp;окладу, то&nbsp;она корректируется при условии, что процент
+            фиксированный, а&nbsp;не&nbsp;плавающий. Например, сотрудник получает ежемесячную надбавку за&nbsp;стаж
+            работы&nbsp;&mdash; 25&nbsp;процентов от&nbsp;оклада. Надбавку установили в&nbsp;зависимости от&nbsp;оклада,
+            поэтому ее&nbsp;индексируют. Если для выплаты установлена &laquo;вилка&raquo;, ее&nbsp;не&nbsp;индексируют.
+            <button class="support__answer-close"></button>
+          </p>
         </div>
       </div>
 

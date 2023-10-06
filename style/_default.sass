@@ -478,14 +478,18 @@ input[type="radio"].visually-hidden
   top: 34px
 
 .premium-data
-  &--half-year,
-  &--quarter-year
+  &--half-year
     .premium-data__hide-fields
       left: 665px
 
+  &.premium__monthly
+    .premium-data__hide-fields
+      left: 500px
+
 .supplement-data
-  .premium-data__hide-fields
-    left: 500px
+  &.supplement__supplement
+    .premium-data__hide-fields
+      left: 500px
 
 .salary-data__hide-fields
   left: 325px
