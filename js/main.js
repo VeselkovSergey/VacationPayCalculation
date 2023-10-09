@@ -1,3 +1,20 @@
+let minimumWage = [
+  {date: "01.01.1900", wage: 7500},
+
+  {date: "01.07.2016", wage: 7500},
+  {date: "01.07.2017", wage: 7800},
+  {date: "01.01.2018", wage: 9489},
+  {date: "01.05.2018", wage: 11163},
+  {date: "01.01.2019", wage: 11280},
+  {date: "01.01.2020", wage: 12130},
+  {date: "01.01.2021", wage: 12792},
+  {date: "01.01.2022", wage: 13890},
+  {date: "01.06.2022", wage: 15279},
+  {date: "01.01.2023", wage: 16242},
+
+  {date: "31.12.20100", wage: 16242}, // меняем на последнее повышение чтобы сделать интервал
+]
+
 let holidays = [
   "01.01.XXXX",
   "02.01.XXXX",
@@ -862,7 +879,36 @@ async function calculate() {
     + premiumsQuarterYear
     + monthlyOtherPremium
 
-  const vacationPay = totalSalaryWithPremium / totalCalendarDaysInBullingPeriod * countVacationsDays
+  const normalSalaryPerDay = totalSalaryWithPremium / totalCalendarDaysInBullingPeriod
+
+  // бежим по каждому дню отпуска для сравнения с МРОТ
+  let localStartDateForMinimumWage = parseDate(endDateInputVacation.val())
+  let totalVacationPay = 0
+  for (let i = countVacationsDays; i >= 1; i--) {
+
+    const findMinimumWage = (currentDate) => {
+      return minimumWage.find((value, index, obj) => {
+        if (index === (minimumWage.length - 1)) {
+          return false
+        }
+
+        const startDate = value
+        const endDate = minimumWage[index + 1]
+
+        const isBetween = checkDateBetweenDates(startDate.date, dateToStr(parseDate(endDate.date).removeDays(1)), currentDate)
+
+        return isBetween
+      })
+    }
+
+    const minimumWagePerDay = findMinimumWage(dateToStr(localStartDateForMinimumWage)).wage / 29.3 * 1
+
+    totalVacationPay += (minimumWagePerDay > normalSalaryPerDay ? minimumWagePerDay : normalSalaryPerDay)
+
+    localStartDateForMinimumWage = localStartDateForMinimumWage.removeDays(1)
+  }
+
+  const vacationPay = totalVacationPay //totalSalaryWithPremium / totalCalendarDaysInBullingPeriod * countVacationsDays
 
   let textTotalSalaryWithPremium = [
     rubFormatter.format(totalSalary),
