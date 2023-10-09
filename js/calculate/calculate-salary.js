@@ -115,6 +115,16 @@ document.body.addEventListener("change", (evn) => {
 })
 
 function checkForOpenNextBtn() {
+
+  // если не было индексации, то нужно выключить галочки
+  if (!wasIndexing()) {
+    document.body.querySelector('.calculate__bonus-premium').classList.add('without-indexing')
+    document.body.querySelector('.calculate__bonus-supplement').classList.add('without-indexing')
+  } else {
+    document.body.querySelector('.calculate__bonus-premium').classList.remove('without-indexing')
+    document.body.querySelector('.calculate__bonus-supplement').classList.remove('without-indexing')
+  }
+
   btnNext.setAttribute("disabled", "true")
 
   let isValid = true
@@ -201,5 +211,5 @@ function checkCrossDate(container, queryDateInput) {
 }
 
 const wasIndexing = () => {
-  return (selectSalary.value === "salary" && salarySwitcher.checked) || (selectSalary.value === "wage" && wageSwitcher.checked)
+  return (selectSalary.value === "salary" && salarySwitcher.checked  && document.body.querySelectorAll(".calculate-salary .index-switcher__checkbox:checked").length)
 }

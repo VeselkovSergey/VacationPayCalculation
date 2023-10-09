@@ -1040,6 +1040,11 @@ input[type=radio].visually-hidden {
   color: #D6D6D6;
 }
 
+.without-indexing .premium-data__switcher,
+.without-indexing .supplement-data__switcher {
+  display: none;
+}
+
 .premium-data__switcher,
 .supplement-data__switcher {
   display: flex;

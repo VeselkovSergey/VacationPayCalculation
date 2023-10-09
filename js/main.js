@@ -497,13 +497,42 @@ async function calculate() {
   let totalSupplementByPeriods = 0
   // бежим по всем доп. выплатам
   document.body.querySelectorAll(".calculate__bonus-supplement .supplement-data--supplemen").forEach((supplementDates) => {
-    const startDateEl = supplementDates.querySelector(".input-data.start-date")
-    const endDateEl = supplementDates.querySelector(".input-data.end-date")
+    let startDateEl = supplementDates.querySelector(".input-data.start-date")
+    let endDateEl = supplementDates.querySelector(".input-data.end-date")
     const valueEl = supplementDates.querySelector(".premium-field__input.premium-sum")
+    let isPeriod = true
+    if (!startDateEl) {
+      isPeriod = false
+      startDateEl = supplementDates.querySelector(".input-data.month-accrual")
+      endDateEl = {
+        value: dateToStr(getLastDayOnMonthByDate(parseDate(startDateEl.value)))
+      }
+    }
+
+    const lastIndexing = (endDate, isPeriod) => {
+      let lastIndexingDate = null
+      let lastIndexingValue = null
+      document.body.querySelectorAll(".calculate__bonus-supplement .supplement-data--supplemen .payment-switcher__checkbox:checked").forEach((isIndexingEl) => {
+        let endDateIndexing = null
+        let valueIndexing = Number(isIndexingEl.closest('.supplement-data--supplemen').querySelector('.premium-field__input.premium-sum').value)
+        if (isPeriod) {
+          endDateIndexing = parseDate(isIndexingEl.closest('.supplement-data--supplemen').querySelector('.input-data.end-date').value)
+        } else {
+          const indexingElTemp = isIndexingEl.closest('.supplement-data--supplemen').querySelector('.input-data.month-accrual')
+          endDateIndexing = getLastDayOnMonthByDate(parseDate(indexingElTemp.value))
+        }
+        if ((!lastIndexingDate || lastIndexingDate < endDateIndexing) && parseDate(endDate) < endDateIndexing) {
+          lastIndexingDate = endDateIndexing
+          lastIndexingValue = valueIndexing
+        }
+      })
+      return lastIndexingValue
+    }
+    const indexingValue = lastIndexing(endDateEl.value, isPeriod)
 
     const startDate = parseDate(startDateEl.value)
     const endDate = parseDate(endDateEl.value)
-    const value = Number(valueEl.value)
+    const value = wasIndexing() ? (indexingValue ?? Number(valueEl.value)) : Number(valueEl.value)
 
     const splitDatesByMonth = splitPeriodOnMonth(startDate, endDate)
 
