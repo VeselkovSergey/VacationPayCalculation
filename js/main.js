@@ -80,6 +80,7 @@ const averageCountDaysSpanBillingPeriod = $(".averageCountDaysSpanBillingPeriod"
 const calculateExample = $(".except-help__example")
 
 const resultCalculate__example = $(".result-calculate__example")
+const resultMinimumWage = document.body.querySelector('.result-minimum-wage')
 const resultCalculate__salary = $(".result-calculate__salary")
 const resultCalculate__day = $(".result-calculate__day")
 const resultCalculate__averageIncome = $(".result-calculate__average-income")
@@ -315,7 +316,7 @@ function setWagePeriods(startDateString, totalMonth) {
 
   const startDate = parseDate(startDateString)
 
-  document.querySelectorAll(".calculate-wage__table tr:not(:last-child)").forEach((periodContainer, key) => {
+  document.querySelectorAll(".calculate-wage__table tr:not(:last-child)").forEach((periodContainer) => {
     periodContainer.classList.add("hide-row")
     periodContainer.querySelector(".wage-table__data-input").dataset.notUse = "true"
   })
@@ -429,7 +430,7 @@ function splitPeriodOnMonth(startDate, endDate) {
 async function calculate() {
 
   const {
-    validDays,
+    // validDays,
     countMonth: countMonthInFullPeriod,
   } = getValidDaysInPeriod(startDateInputBillingPeriod.val(), endDateInputBillingPeriod.val())
 
@@ -513,7 +514,7 @@ async function calculate() {
       let lastIndexingDate = null
       let lastIndexingValue = null
       document.body.querySelectorAll(".calculate__bonus-supplement .supplement-data--supplemen .payment-switcher__checkbox:checked").forEach((isIndexingEl) => {
-        let endDateIndexing = null
+        let endDateIndexing
         let valueIndexing = Number(isIndexingEl.closest('.supplement-data--supplemen').querySelector('.premium-field__input.premium-sum').value)
         if (isPeriod) {
           endDateIndexing = parseDate(isIndexingEl.closest('.supplement-data--supplemen').querySelector('.input-data.end-date').value)
@@ -911,12 +912,14 @@ async function calculate() {
   const normalSalaryPerDay = totalSalaryWithPremium / totalCalendarDaysInBullingPeriod
 
   // бежим по каждому дню отпуска для сравнения с МРОТ
-  let localStartDateForMinimumWage = parseDate(endDateInputVacation.val())
+  let localStartDateForMinimumWage = parseDate(startDateInputVacation.val())
   let totalVacationPay = 0
-  for (let i = countVacationsDays; i >= 1; i--) {
+  let isShowMinimumWage = false
+  let vacationPayPerDay = {}
+  for (let i = 0; i < countVacationsDays; i++) {
 
     const findMinimumWage = (currentDate) => {
-      return minimumWage.find((value, index, obj) => {
+      return minimumWage.find((value, index) => {
         if (index === (minimumWage.length - 1)) {
           return false
         }
@@ -924,20 +927,34 @@ async function calculate() {
         const startDate = value
         const endDate = minimumWage[index + 1]
 
-        const isBetween = checkDateBetweenDates(startDate.date, dateToStr(parseDate(endDate.date).removeDays(1)), currentDate)
-
-        return isBetween
+        return checkDateBetweenDates(startDate.date, dateToStr(parseDate(endDate.date).removeDays(1)), currentDate)
       })
     }
 
-    const minimumWagePerDay = findMinimumWage(dateToStr(localStartDateForMinimumWage)).wage / 29.3 * 1
+    const minimumWageTemp = findMinimumWage(dateToStr(localStartDateForMinimumWage)).wage
+    const minimumWagePerDay = minimumWageTemp / 29.3 * 1
 
-    totalVacationPay += (minimumWagePerDay > normalSalaryPerDay ? minimumWagePerDay : normalSalaryPerDay)
+    if (!vacationPayPerDay[`${monthsByIndex[localStartDateForMinimumWage.getMonth()]} ${localStartDateForMinimumWage.getFullYear()}`]) {
+      vacationPayPerDay[`${monthsByIndex[localStartDateForMinimumWage.getMonth()]} ${localStartDateForMinimumWage.getFullYear()}`] = {
+        amount: 0,
+        days: 0,
+        minimumWage: minimumWageTemp
+      }
+    }
+    vacationPayPerDay[`${monthsByIndex[localStartDateForMinimumWage.getMonth()]} ${localStartDateForMinimumWage.getFullYear()}`].amount += minimumWagePerDay
+    vacationPayPerDay[`${monthsByIndex[localStartDateForMinimumWage.getMonth()]} ${localStartDateForMinimumWage.getFullYear()}`].days++
 
-    localStartDateForMinimumWage = localStartDateForMinimumWage.removeDays(1)
+    if (minimumWagePerDay > normalSalaryPerDay) {
+      isShowMinimumWage = true
+      totalVacationPay += minimumWagePerDay
+    } else {
+      totalVacationPay += normalSalaryPerDay
+    }
+
+    localStartDateForMinimumWage = localStartDateForMinimumWage.addDays(1)
   }
 
-  const vacationPay = totalVacationPay //totalSalaryWithPremium / totalCalendarDaysInBullingPeriod * countVacationsDays
+  const vacationPay = totalSalaryWithPremium / totalCalendarDaysInBullingPeriod * countVacationsDays
 
   let textTotalSalaryWithPremium = [
     rubFormatter.format(totalSalary),
@@ -951,6 +968,21 @@ async function calculate() {
   textTotalSalaryWithPremium = textTotalSalaryWithPremium.join(" + ")
 
   resultCalculate__example.html(`( ${textTotalSalaryWithPremium} ) / ${totalCalendarDaysInBullingPeriod} дн. x ${countVacationsDays} дн. = ${rubFormatter.format(vacationPay)}`)
+  if (isShowMinimumWage) {
+    resultMinimumWage.innerHTML = ""
+    resultMinimumWage.style.display = "block"
+    Object.keys(vacationPayPerDay).forEach((key) => {
+      const item = vacationPayPerDay[key]
+      const itemEl = document.createElement("span")
+      itemEl.innerHTML = `МРОТ ( ${rubFormatter.format(item.minimumWage)} ) / 29.3 дн. x ${item.days} дн. ${rubFormatter.format(item.amount)} ( ${key} )`
+      resultMinimumWage.append(itemEl)
+    })
+    const itemEl = document.createElement("span")
+    itemEl.innerHTML = `Итого к выплате: ${rubFormatter.format(totalVacationPay)}`
+    resultMinimumWage.append(itemEl)
+  } else {
+    resultMinimumWage.style.display = null
+  }
   resultCalculate__salary.html(`${rubFormatter.format(totalSalaryWithPremium)} — заработок за расчетный период`)
   resultCalculate__day.html(`${totalCalendarDaysInBullingPeriod} дн. — количество календарных дней расчетного периода`)
   resultCalculate__averageIncome.html(`${rubFormatter.format(totalSalaryWithPremium)} / ${totalCalendarDaysInBullingPeriod} дн. — средний дневной заработок ( ${rubFormatter.format(totalSalaryWithPremium / totalCalendarDaysInBullingPeriod)} )`)

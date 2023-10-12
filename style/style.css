@@ -1144,6 +1144,12 @@ input[type=radio].visually-hidden {
   font-size: 16px;
   line-height: 22px;
 }
+.result-calculate .result-minimum-wage {
+  display: none;
+  margin-bottom: 10px;
+  font-size: 16px;
+  line-height: 22px;
+}
 
 .result-calculate__caption {
   padding-bottom: 10px;
