@@ -8,6 +8,20 @@
   <link rel="stylesheet" href="style/style.css" />
   <link rel="stylesheet" href="style/jquery-ui.css" />
   <title>Расчет отпускных</title>
+  <style>
+    @media print {
+      body {
+        visibility: hidden;
+      }
+      #section-to-print {
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: block;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -407,7 +421,7 @@
       </li>
 
       <!-- Расчет -->
-      <li class="step__item calculate-view">
+      <li class="step__item calculate-view" id="section-to-print">
         <h2 class="step__title">Сумма отпускных составляет</h2>
 
         <span class="calculate__result-value"></span>
