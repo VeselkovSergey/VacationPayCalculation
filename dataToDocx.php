@@ -1,7 +1,7 @@
 <?php
 
 $data = json_decode($_POST['data']);
-print_r($data, $data->calculate);
+//print_r($data, $data->calculate);
 $calculate = $data->calculate;
 $vacationPay = $data->vacationPay;
 $countVacationsDays = $data->countVacationsDays;
