@@ -59,7 +59,11 @@ $text .= "
     </tbody>
 </table>";
 
-$fileName = "Отпускные_".time().".docx";
+if( is_dir("./files") === false ) {
+    mkdir("./files");
+}
+
+$fileName = "./files/Отпускные_".time().".docx";
 
 require "vendor/autoload.php";
 $pw = new \PhpOffice\PhpWord\PhpWord();
