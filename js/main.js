@@ -82,6 +82,7 @@ const calculateExample = $(".except-help__example")
 const resultCalculate__example = $(".result-calculate__example")
 const resultMinimumWage = document.body.querySelector('.result-minimum-wage')
 const resultCalculate__salary = $(".result-calculate__salary")
+const totalPay = $(".total-pay")
 const resultCalculate__day = $(".result-calculate__day")
 const resultCalculate__averageIncome = $(".result-calculate__average-income")
 const resultCalculate__vacation = $(".result-calculate__vacation")
@@ -983,6 +984,7 @@ async function calculate() {
   } else {
     resultMinimumWage.style.display = null
   }
+  totalPay.html(`${rubFormatter.format(totalVacationPay)}`)
   resultCalculate__salary.html(`${rubFormatter.format(totalSalaryWithPremium)} — заработок за расчетный период`)
   resultCalculate__day.html(`${totalCalendarDaysInBullingPeriod} дн. — количество календарных дней расчетного периода`)
   resultCalculate__averageIncome.html(`${rubFormatter.format(totalSalaryWithPremium)} / ${totalCalendarDaysInBullingPeriod} дн. — средний дневной заработок ( ${rubFormatter.format(totalSalaryWithPremium / totalCalendarDaysInBullingPeriod)} )`)

@@ -144,6 +144,10 @@ input[type=radio].visually-hidden {
 .step__title--salary {
   width: 450px;
 }
+.step__title.total-pay {
+  font-size: 32px;
+  margin-top: 20px;
+}
 
 .step__desc {
   display: inline-block;
