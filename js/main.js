@@ -83,6 +83,7 @@ const resultCalculate__example = $(".result-calculate__example")
 const resultMinimumWage = document.body.querySelector('.result-minimum-wage')
 const resultCalculate__salary = $(".result-calculate__salary")
 const totalPay = $(".total-pay")
+const minimumPayDescription = $(".minimum-pay-description")
 const resultCalculate__day = $(".result-calculate__day")
 const resultCalculate__averageIncome = $(".result-calculate__average-income")
 const resultCalculate__vacation = $(".result-calculate__vacation")
@@ -970,19 +971,20 @@ async function calculate() {
 
   resultCalculate__example.html(`( ${textTotalSalaryWithPremium} ) / ${totalCalendarDaysInBullingPeriod} дн. x ${countVacationsDays} дн. = ${rubFormatter.format(vacationPay)}`)
   if (isShowMinimumWage) {
+
+    minimumPayDescription.addClass("--show")
+
     resultMinimumWage.innerHTML = ""
     resultMinimumWage.style.display = "block"
     Object.keys(vacationPayPerDay).forEach((key) => {
       const item = vacationPayPerDay[key]
       const itemEl = document.createElement("span")
-      itemEl.innerHTML = `МРОТ ( ${rubFormatter.format(item.minimumWage)} ) / 29.3 дн. x ${item.days} дн. ${rubFormatter.format(item.amount)} ( ${key} )`
+      itemEl.innerHTML = `Расчёт из МРОТ за ${key} — ( ${rubFormatter.format(item.minimumWage)} ) / 29.3 дн. x ${item.days} дн. = ${rubFormatter.format(item.amount)}`
       resultMinimumWage.append(itemEl)
     })
-    const itemEl = document.createElement("span")
-    itemEl.innerHTML = `Итого к выплате: ${rubFormatter.format(totalVacationPay)}`
-    resultMinimumWage.append(itemEl)
   } else {
     resultMinimumWage.style.display = null
+    minimumPayDescription.removeClass("--show")
   }
   totalPay.html(`${rubFormatter.format(totalVacationPay)}`)
   resultCalculate__salary.html(`${rubFormatter.format(totalSalaryWithPremium)} — заработок за расчетный период`)

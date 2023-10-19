@@ -149,6 +149,14 @@ input[type=radio].visually-hidden {
   margin-top: 20px;
 }
 
+.minimum-pay-description {
+  display: none;
+  margin-top: 20px;
+}
+.minimum-pay-description.--show {
+  display: block;
+}
+
 .step__desc {
   display: inline-block;
   width: 420px;
@@ -1137,7 +1145,7 @@ input[type=radio].visually-hidden {
 }
 
 .result-calculate {
-  width: 630px;
+  width: 700px;
   padding: 17px 42px 25px 23px;
   background: rgba(0, 116, 235, 0.04);
   border-radius: 3px;
