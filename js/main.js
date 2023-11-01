@@ -11,8 +11,9 @@ let minimumWage = [
   {date: "01.01.2022", wage: 13890},
   {date: "01.06.2022", wage: 15279},
   {date: "01.01.2023", wage: 16242},
+  {date: "01.01.2024", wage: 19242},
 
-  {date: "31.12.20100", wage: 16242}, // меняем на последнее повышение чтобы сделать интервал
+  {date: "31.12.20100", wage: 19242}, // меняем на последнее повышение чтобы сделать интервал
 ]
 
 let holidays = [
@@ -79,14 +80,9 @@ const countMonthSpanBillingPeriod = $(".countMonthSpanBillingPeriod")
 const averageCountDaysSpanBillingPeriod = $(".averageCountDaysSpanBillingPeriod")
 const calculateExample = $(".except-help__example")
 
-const resultCalculate__example = $(".result-calculate__example")
-const resultMinimumWage = document.body.querySelector('.result-minimum-wage')
-const resultCalculate__salary = $(".result-calculate__salary")
+const resultCalculate__example =  document.body.querySelector(".result-calculate__example")
 const totalPay = $(".total-pay")
 const minimumPayDescription = $(".minimum-pay-description")
-const resultCalculate__day = $(".result-calculate__day")
-const resultCalculate__averageIncome = $(".result-calculate__average-income")
-const resultCalculate__vacation = $(".result-calculate__vacation")
 const tableResultBody = $(".calculate__result-table.table-result tbody")
 
 const salaryDateTextElement = $("body > section > ul.calculate__step-list.step > li:nth-child(3) > div.step__item-salary > div.step__data.salary-data > div > span > span")
@@ -969,28 +965,50 @@ async function calculate() {
 
   textTotalSalaryWithPremium = textTotalSalaryWithPremium.join(" + ")
 
-  resultCalculate__example.html(`( ${textTotalSalaryWithPremium} ) / ${totalCalendarDaysInBullingPeriod} дн. x ${countVacationsDays} дн. = ${rubFormatter.format(vacationPay)}`)
+  resultCalculate__example.innerHTML = ""
   if (isShowMinimumWage) {
 
-    minimumPayDescription.addClass("--show")
+    let resultCalculate__example_TEXT = []
 
-    resultMinimumWage.innerHTML = ""
-    resultMinimumWage.style.display = "block"
+    minimumPayDescription.addClass("--show")
+    minimumPayDescription.html("Расчет произведен исходя из МРОТ, поскольку сумма отпускных при таком расчете получилась больше суммы, посчитанной из фактического заработка.")
+
     Object.keys(vacationPayPerDay).forEach((key) => {
       const item = vacationPayPerDay[key]
-      const itemEl = document.createElement("span")
-      itemEl.innerHTML = `Расчёт из МРОТ за ${key} — ( ${rubFormatter.format(item.minimumWage)} ) / 29.3 дн. x ${item.days} дн. = ${rubFormatter.format(item.amount)}`
-      resultMinimumWage.append(itemEl)
+      const localFactPay = totalSalaryWithPremium / totalCalendarDaysInBullingPeriod * item.days
+
+      if (item.amount > localFactPay) {
+        addSpanInEl(`${rubFormatter.format(item.minimumWage)} — размер МРОТ за ${key}`, resultCalculate__example)
+        addSpanInEl(`29.3 дн. — среднее количество календарных дней в месяце без учета праздничных дней`, resultCalculate__example)
+        addSpanInEl(`${rubFormatter.format(item.minimumWage)} / 29.3 дн. = ${rubFormatter.format(item.minimumWage / 29.3)} — средний дневной заработок за ${key}`, resultCalculate__example)
+        addSpanInEl(`${item.days} дн. — количество дней отпуска за ${key}`, resultCalculate__example)
+        addSpanInEl(`Расчёт из МРОТ за ${key} — ${rubFormatter.format(item.minimumWage)} / 29.3 дн. x ${item.days} дн. = ${rubFormatter.format(item.amount)}`, resultCalculate__example)
+        resultCalculate__example_TEXT.push(`${rubFormatter.format(item.amount)}`)
+      } else {
+        minimumPayDescription.html("Расчет произведен частично исходя из фактического заработка, частично из МРОТ, поскольку при таком расчете сумма отпускных получилась больше суммы, посчитанной из фактического заработка.")
+        addSpanInEl(`${rubFormatter.format(totalSalaryWithPremium)} — заработок за расчетный период`, resultCalculate__example)
+        addSpanInEl(`${totalCalendarDaysInBullingPeriod} дн. — количество календарных дней расчетного периода`, resultCalculate__example)
+        addSpanInEl(`${rubFormatter.format(totalSalaryWithPremium)} / ${totalCalendarDaysInBullingPeriod} дн. — средний дневной заработок ( ${rubFormatter.format(totalSalaryWithPremium / totalCalendarDaysInBullingPeriod)} )`, resultCalculate__example)
+        addSpanInEl(`${item.days} дн. — количество дней отпуска за ${key}`, resultCalculate__example)
+        addSpanInEl(`Расчёт из фактического заработка за ${key} — ${rubFormatter.format(totalSalaryWithPremium)} / ${totalCalendarDaysInBullingPeriod} дн. x ${item.days} дн. = ${rubFormatter.format(localFactPay)}`, resultCalculate__example)
+        resultCalculate__example_TEXT.push(`${rubFormatter.format(localFactPay)}`)
+      }
+
+      addSpanInEl("<br>", resultCalculate__example)
     })
+    addSpanInEl("Итого сумма отпускных", resultCalculate__example)
+    addSpanInEl(resultCalculate__example_TEXT.join(" + ") + ` = ${rubFormatter.format(totalVacationPay)}`, resultCalculate__example)
+
   } else {
-    resultMinimumWage.style.display = null
+    addSpanInEl( `${rubFormatter.format(totalSalaryWithPremium)} — заработок за расчетный период`, resultCalculate__example)
+    addSpanInEl( `${totalCalendarDaysInBullingPeriod} дн. — количество календарных дней расчетного периода`, resultCalculate__example)
+    addSpanInEl( `${rubFormatter.format(totalSalaryWithPremium)} / ${totalCalendarDaysInBullingPeriod} дн. — средний дневной заработок ( ${rubFormatter.format(totalSalaryWithPremium / totalCalendarDaysInBullingPeriod)} )`, resultCalculate__example)
+    addSpanInEl( `${countVacationsDays} дн. — количество дней отпуска`, resultCalculate__example)
+    addSpanInEl("Итого сумма отпускных", resultCalculate__example)
+    addSpanInEl( `${textTotalSalaryWithPremium} / ${totalCalendarDaysInBullingPeriod} дн. x ${countVacationsDays} дн. = ${rubFormatter.format(vacationPay)}`, resultCalculate__example)
     minimumPayDescription.removeClass("--show")
   }
   totalPay.html(`${rubFormatter.format(totalVacationPay)}`)
-  resultCalculate__salary.html(`${rubFormatter.format(totalSalaryWithPremium)} — заработок за расчетный период`)
-  resultCalculate__day.html(`${totalCalendarDaysInBullingPeriod} дн. — количество календарных дней расчетного периода`)
-  resultCalculate__averageIncome.html(`${rubFormatter.format(totalSalaryWithPremium)} / ${totalCalendarDaysInBullingPeriod} дн. — средний дневной заработок ( ${rubFormatter.format(totalSalaryWithPremium / totalCalendarDaysInBullingPeriod)} )`)
-  resultCalculate__vacation.html(`${countVacationsDays} дн. — количество дней отпуска`)
 
   resultObject = {
     calculate: `( ${textTotalSalaryWithPremium} ) / ${totalCalendarDaysInBullingPeriod} дн. x ${countVacationsDays} дн. = ${rubFormatter.format(vacationPay)}`,
@@ -1173,3 +1191,9 @@ $(function () {
     // yearRange: "1900:2100",
   })
 })
+
+function addSpanInEl (text, parent) {
+  const itemEl = document.createElement("span")
+  itemEl.innerHTML = text
+  parent.append(itemEl)
+}
