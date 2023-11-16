@@ -85,7 +85,7 @@ const totalPay = $(".total-pay")
 const minimumPayDescription = $(".minimum-pay-description")
 const tableResultBody = $(".calculate__result-table.table-result tbody")
 
-const salaryDateTextElement = $("body > section > ul.calculate__step-list.step > li:nth-child(3) > div.step__item-salary > div.step__data.salary-data > div > span > span")
+const salaryDateTextElement = $(".salary-data__date")
 
 const downloadResultButtonEl = document.body.querySelector('.calculate__btn-result')
 downloadResultButtonEl.addEventListener('click', async () => {
@@ -246,7 +246,7 @@ function setBillingPeriod(startDate) {
   calculate()
   // setCountDaysInputBillingPeriod(351.6, 12, null)
   countDaysInputBillingPeriod.attr("disabled", true)
-  salaryDateTextElement.html(`${monthsByIndex[startDateObject.month - 1]} ${startDateObject.year - (startDateObject.month - 1 === 11 ? 2 : 1)}`)
+  salaryDateTextElement.html(`${monthsByIndex[startDateObject.month - 1]} ${startDateObject.year - 1}`)
 
   setIntervalForRelationToBillingPeriod()
 }
