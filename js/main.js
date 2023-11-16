@@ -997,7 +997,11 @@ async function calculate() {
       addSpanInEl("<br>", resultCalculate__example)
     })
     addSpanInEl("Итого сумма отпускных", resultCalculate__example)
-    addSpanInEl(resultCalculate__example_TEXT.join(" + ") + ` = ${rubFormatter.format(totalVacationPay)}`, resultCalculate__example)
+    if (resultCalculate__example_TEXT.length === 1) {
+      addSpanInEl(`${rubFormatter.format(totalVacationPay)}`, resultCalculate__example)
+    } else {
+      addSpanInEl(resultCalculate__example_TEXT.join(" + ") + ` = ${rubFormatter.format(totalVacationPay)}`, resultCalculate__example)
+    }
 
   } else {
     addSpanInEl( `${rubFormatter.format(totalSalaryWithPremium)} — заработок за расчетный период`, resultCalculate__example)
